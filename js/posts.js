@@ -5,11 +5,11 @@ function loadPosts() {
   if (stored) return JSON.parse(stored);
   // initial sample posts (anonymous – no author)
   const initial = [
-    { id: 'p1', text: "The pressure from work and family expectations has been overwhelming. Every day feels like I'm not enough, no matter what I do.", tags: ["stress"], moodEmoji: "😰", timestamp: Date.now() - 2*3600000, similarCountCache: 142, authorId: null },
-    { id: 'p2', text: "I've been struggling to sleep because my mind won't stop racing. So much weight I can't tell anyone.", tags: ["anxiety"], moodEmoji: "😔", timestamp: Date.now() - 4*3600000, similarCountCache: 89, authorId: null },
-    { id: 'p3', text: "The stress of meeting expectations while dealing with self-doubt is exhausting.", tags: ["burnout"], moodEmoji: "😤", timestamp: Date.now() - 5*3600000, similarCountCache: 156, authorId: null },
-    { id: 'p4', text: "Feeling anxious about the future and my choices. Nobody seems to understand.", tags: ["anxiety"], moodEmoji: "😰", timestamp: Date.now() - 6*3600000, similarCountCache: 67, authorId: null },
-    { id: 'p5', text: "Some days are harder. Trying to keep it together but inside fragile.", tags: ["loneliness"], moodEmoji: "😔", timestamp: Date.now() - 7*3600000, similarCountCache: 203, authorId: null }
+    { id: 'p1', text: "I miss home so much. The dal bhaat, aama's voice, my favorite street corner. Everything here feels cold and empty.", tags: ["homesick"], moodEmoji: "🏠", timestamp: Date.now() - 2*3600000, similarCountCache: 142, authorId: null },
+    { id: 'p2', text: "Been sending money home and barely have enough for rent. The pressure is crushing me. How do other students do this?", tags: ["financial"], moodEmoji: "💰", timestamp: Date.now() - 4*3600000, similarCountCache: 89, authorId: null },
+    { id: 'p3', text: "Why am I here? Everyone else seems to fit in. I feel like an outsider in everything.", tags: ["lonely"], moodEmoji: "🕯️", timestamp: Date.now() - 5*3600000, similarCountCache: 156, authorId: null },
+    { id: 'p4', text: "The fear of visa rejection is killing me. I can't sleep, can't focus. What if I have to go back?", tags: ["anxious"], moodEmoji: "💢", timestamp: Date.now() - 6*3600000, similarCountCache: 67, authorId: null },
+    { id: 'p5', text: "Nothing is the same. The food tastes different, the weather feels wrong, people think differently. I don't belong anywhere anymore.", tags: ["culture-shock"], moodEmoji: "🇳🇵", timestamp: Date.now() - 7*3600000, similarCountCache: 203, authorId: null }
   ];
   localStorage.setItem(POSTS_STORAGE, JSON.stringify(initial));
   return initial;
@@ -35,11 +35,11 @@ function addNewPost(text, tags, authorId) {
 }
 
 function getEmojiForTags(tags) {
-  if (tags.includes('anxiety')) return '😰';
-  if (tags.includes('stress')) return '😤';
-  if (tags.includes('sadness')) return '😢';
-  if (tags.includes('loneliness')) return '😔';
-  if (tags.includes('burnout')) return '😞';
+  if (tags.includes('anxious')) return '💢';
+  if (tags.includes('homesick')) return '🏠';
+  if (tags.includes('lonely')) return '🕯️';
+  if (tags.includes('financial')) return '💰';
+  if (tags.includes('culture-shock')) return '🇳🇵';
   return '🪔';
 }
 

@@ -71,11 +71,11 @@
         <h2 class="serif-heading" style="margin-bottom: 0.5rem;">share your kathaa</h2>
         <textarea id="postTextarea" class="post-textarea" rows="3" placeholder="What’s weighing on your heart? write freely..."></textarea>
         <div class="tag-group" id="tagSelector">
-          <button data-tag="stress" class="mood-tag">😥 Stress</button>
-          <button data-tag="anxiety" class="mood-tag">😰 Anxiety</button>
-          <button data-tag="sadness" class="mood-tag">😢 Sadness</button>
-          <button data-tag="loneliness" class="mood-tag">🕯️ Loneliness</button>
-          <button data-tag="burnout" class="mood-tag">⚡ Burnout</button>
+          <button data-tag="homesick" class="mood-tag">🏠 Homesick</button>
+          <button data-tag="anxious" class="mood-tag">💢 Anxious</button>
+          <button data-tag="lonely" class="mood-tag">🕯️ Lonely</button>
+          <button data-tag="financial" class="mood-tag">💰 Financial Stress</button>
+          <button data-tag="culture-shock" class="mood-tag">🇳🇵 Culture Shock</button>
         </div>
         <button id="publishPostBtn" class="btn-primary" style="margin-top: 0.5rem;">Post anonymously 🪔</button>
         <div id="validationArea"></div>
@@ -83,11 +83,11 @@
 
       <div class="filter-bar" style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
         <button data-filter="all" class="filter-chip active">All stories</button>
-        <button data-filter="stress" class="filter-chip">Stress</button>
-        <button data-filter="anxiety" class="filter-chip">Anxiety</button>
-        <button data-filter="sadness" class="filter-chip">Sadness</button>
-        <button data-filter="loneliness" class="filter-chip">Loneliness</button>
-        <button data-filter="burnout" class="filter-chip">Burnout</button>
+        <button data-filter="homesick" class="filter-chip">Homesick</button>
+        <button data-filter="anxious" class="filter-chip">Anxious</button>
+        <button data-filter="lonely" class="filter-chip">Lonely</button>
+        <button data-filter="financial" class="filter-chip">Financial Stress</button>
+        <button data-filter="culture-shock" class="filter-chip">Culture Shock</button>
       </div>
 
       <div id="feedContainer" class="feed-grid" style="display: flex; flex-direction: column; gap: 1rem;"></div>
@@ -118,11 +118,11 @@
     }
 
     function getEmojiForTags(tags) {
-      if (tags.includes('anxiety')) return '😰';
-      if (tags.includes('stress')) return '😤';
-      if (tags.includes('sadness')) return '😢';
-      if (tags.includes('loneliness')) return '😔';
-      if (tags.includes('burnout')) return '😞';
+      if (tags.includes('anxious')) return '💢';
+      if (tags.includes('homesick')) return '🏠';
+      if (tags.includes('lonely')) return '🕯️';
+      if (tags.includes('financial')) return '💰';
+      if (tags.includes('culture-shock')) return '🇳🇵';
       return '🪔';
     }
 
@@ -192,13 +192,19 @@
     const WAITING_MESSAGES = [
       "🕯️ Holding your kathaa safely...",
       "🕯️ Lighting a diya for your courage...",
-      "🕯️ Your story is resting in gentle hands..."
+      "🕯️ Your story is being cradled in gentle hands...",
+      "🕯️ Gathering warmth for your heart..."
     ];
 
     const FALLBACK_VALIDATIONS = [
-      "You are heard. Thank you for sharing your heart with us.",
-      "Even heavy feelings pass — breathe, you are safe here.",
-      "Many hearts echo yours tonight. You’re never alone."
+      "Your courage to share matters. You are not alone in this.",
+      "This weight you carry — many hearts know it. You are seen.",
+      "Breathe, friend. Even hard things pass. Be gentle with yourself.",
+      "Write one honest sentence today. That is enough.",
+      "Your feelings are valid. Rest is not laziness; it's wisdom.",
+      "Chai and quiet. Sometimes that's all we need to keep going.",
+      "You are stronger than you believe. This moment will change.",
+      "Your kathaa echoes. Others feel this too. You're never alone."
     ];
 
     function randomFrom(list) {
@@ -206,7 +212,7 @@
     }
 
     // Toast helper
-    function showToast(message, emoji = "🕯️", duration = 5000) {
+    function showToast(message, emoji = "🕯️", duration = 5000, hasButton = false) {
       // Remove existing toast
       const existing = document.querySelector('.katha-toast');
       if (existing) existing.remove();
@@ -215,18 +221,44 @@
 
       const toast = document.createElement('div');
       toast.className = 'katha-toast';
+      
+      const buttonHTML = hasButton ? `
+        <button onclick="this.closest('.katha-toast').classList.add('fade-out'); setTimeout(() => this.closest('.katha-toast').remove(), 300);" style="
+          background: var(--warm-gold);
+          color: var(--bg-dark);
+          border: none;
+          padding: 0.4rem 1rem;
+          border-radius: 6px;
+          font-weight: 500;
+          cursor: pointer;
+          font-size: 0.85rem;
+          margin-top: 0.6rem;
+          transition: all 0.2s;
+        " onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">I see you</button>
+      ` : '';
+      
       toast.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.6rem;">
-          <span class="toast-emoji">${emoji}</span>
-          <div class="toast-message">${escapeHtml(message)}</div>
+        <div style="display: flex; align-items: flex-start; gap: 0.6rem; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <span class="toast-emoji">${emoji}</span>
+            <div class="toast-message">${escapeHtml(message)}</div>
+          </div>
+          ${buttonHTML}
         </div>
       `;
       document.body.appendChild(toast);
 
-      setTimeout(() => {
-        toast.classList.add('fade-out');
-        setTimeout(() => toast.remove(), 300);
-      }, duration);
+      // Only auto-timeout if no button (button is for longer, important messages)
+      if (!hasButton) {
+        setTimeout(() => {
+          if (toast.parentElement) { // Check if still in DOM
+            toast.classList.add('fade-out');
+            setTimeout(() => {
+              if (toast.parentElement) toast.remove();
+            }, 300);
+          }
+        }, duration);
+      }
     }
 
     async function fetchAISuggestionText(text) {
@@ -287,8 +319,8 @@
             suggestion = randomFrom(FALLBACK_VALIDATIONS);
           }
 
-          // Update the toast with the final message
-          showToast(suggestion, "✨", 5000);
+          // Update the toast with the final message — with button so user has time to read
+          showToast(suggestion, "✨", 5000, true);
 
           // Also show validation area inside the card
           const valDiv = document.getElementById('validationArea');

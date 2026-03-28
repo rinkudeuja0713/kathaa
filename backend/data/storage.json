@@ -1,6 +1,48 @@
 {
   "posts": [
     {
+      "text": "I recently arrived here in Norway. I have no friends at all and i am having a lot of problem adjusting. Its only been a couple months but i am already struggling with my anxious thoughts. I miss home very much. I cant even talk to my family back home because i fear they will see through the stress in me . I wanna go back soon so i can catch a break and maybe that will make me feel better.",
+      "tags": [
+        "homesick",
+        "lonely"
+      ],
+      "moodEmoji": "\ud83c\udfe0",
+      "authorId": "anon_1jt0rx5ticmnaf9x2i",
+      "timestamp": "2026-03-28T11:46:53.085318",
+      "id": 1774712813.085318
+    },
+    {
+      "text": "i miss my family but i cant afford to go back right now.",
+      "tags": [
+        "homesick"
+      ],
+      "moodEmoji": "\ud83c\udfe0",
+      "authorId": "anon_1jt0rx5ticmnaf9x2i",
+      "timestamp": "2026-03-28T11:42:25.888865",
+      "id": 1774712545.888865
+    },
+    {
+      "text": "i feel tired and anxious about a test",
+      "tags": [
+        "stress"
+      ],
+      "moodEmoji": "\ud83d\ude24",
+      "authorId": "anon_1jt0rx5ticmnaf9x2i",
+      "timestamp": "2026-03-28T11:03:43.293576",
+      "id": 1774710223.293576
+    },
+    {
+      "text": "My college is stressing me out. I am failing classes and doing very poorly on my assignments. My parents dont know about this and i am scared to tell them . i dont know what to do .",
+      "tags": [
+        "loneliness",
+        "stress"
+      ],
+      "moodEmoji": "\ud83d\ude24",
+      "authorId": "anon_1jt0rx5ticmnaf9x2i",
+      "timestamp": "2026-03-28T10:49:51.630359",
+      "id": 1774709391.630359
+    },
+    {
       "text": "dgvdav",
       "tags": [
         "loneliness"
