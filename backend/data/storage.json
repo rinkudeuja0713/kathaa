@@ -1,56 +1,131 @@
 {
-  "posts": [
-    {
-      "text": "dgvdav",
-      "tags": [
-        "loneliness"
-      ],
-      "moodEmoji": "\ud83d\ude14",
-      "authorId": "anon_obmfu5ql5xmna46y1n",
-      "timestamp": "2026-03-28T15:07:01.859354",
-      "id": 1774690621.859354
-    },
-    {
-      "text": "rtht",
-      "tags": [
-        "stress"
-      ],
-      "moodEmoji": "\ud83d\ude24",
-      "authorId": "anon_obmfu5ql5xmna46y1n",
-      "timestamp": "2026-03-28T15:06:03.812638",
-      "id": 1774690563.812638
-    },
-    {
-      "text": "anxious",
-      "tags": [
-        "anxiety",
-        "loneliness"
-      ],
-      "moodEmoji": "\ud83d\ude30",
-      "authorId": "anon_obmfu5ql5xmna46y1n",
-      "timestamp": "2026-03-28T15:05:03.405830",
-      "id": 1774690503.40583
-    },
-    {
-      "text": "i m stress",
-      "tags": [
-        "stress"
-      ],
-      "moodEmoji": "\ud83d\ude24",
-      "authorId": "anon_obmfu5ql5xmna46y1n",
-      "timestamp": "2026-03-28T14:54:20.828425",
-      "id": 1774689860.828425
-    },
-    {
-      "text": "fdsgdfgdf",
-      "tags": [
-        "sadness"
-      ],
-      "moodEmoji": "\ud83d\ude22",
-      "authorId": "anon_obmfu5ql5xmna46y1n",
-      "timestamp": "2026-03-28T14:53:13.504265",
-      "id": 1774689793.504265
-    }
-  ],
-  "moods": []
+    "posts": [
+        {
+            "text": "dgvdav",
+            "tags": [
+                "loneliness"
+            ],
+            "moodEmoji": "\ud83d\ude14",
+            "authorId": "anon_obmfu5ql5xmna46y1n",
+            "timestamp": "2026-03-28T15:07:01.859354",
+            "id": 1774690621.859354
+        },
+        {
+            "text": "rtht",
+            "tags": [
+                "stress"
+            ],
+            "moodEmoji": "\ud83d\ude24",
+            "authorId": "anon_obmfu5ql5xmna46y1n",
+            "timestamp": "2026-03-28T15:06:03.812638",
+            "id": 1774690563.812638
+        },
+        {
+            "text": "anxious",
+            "tags": [
+                "anxiety",
+                "loneliness"
+            ],
+            "moodEmoji": "\ud83d\ude30",
+            "authorId": "anon_obmfu5ql5xmna46y1n",
+            "timestamp": "2026-03-28T15:05:03.405830",
+            "id": 1774690503.40583
+        },
+        {
+            "text": "i m stress",
+            "tags": [
+                "stress"
+            ],
+            "moodEmoji": "\ud83d\ude24",
+            "authorId": "anon_obmfu5ql5xmna46y1n",
+            "timestamp": "2026-03-28T14:54:20.828425",
+            "id": 1774689860.828425
+        },
+        {
+            "text": "fdsgdfgdf",
+            "tags": [
+                "sadness"
+            ],
+            "moodEmoji": "\ud83d\ude22",
+            "authorId": "anon_obmfu5ql5xmna46y1n",
+            "timestamp": "2026-03-28T14:53:13.504265",
+            "id": 1774689793.504265
+        }
+    ],
+    "moods": [],
+    "groups": [
+        {
+            "id": "g1",
+            "name": "Healing Hearts",
+            "description": "A support group for those dealing with loss and grief.",
+            "category": "Support",
+            "members": [
+                "anon_obmfu5ql5xmna46y1n"
+            ]
+        },
+        {
+            "id": "g2",
+            "name": "Calm in Chaos",
+            "description": "Daily mindfulness and anxiety management techniques.",
+            "category": "Growth",
+            "members": []
+        }
+    ],
+    "rooms": [
+        {
+            "id": "r1",
+            "groupId": "g1",
+            "name": "Evening Reflection",
+            "status": "active",
+            "url": "https://kathaa.daily.co/demo",
+            "isMentorSession": false,
+            "participants": [],
+            "dailyUrl": "https://katha.daily.co/kathaa-evening-reflection-7786"
+        },
+        {
+            "id": "r2",
+            "groupId": "g1",
+            "name": "Silent Support",
+            "status": "active",
+            "url": "https://kathaa.daily.co/demo",
+            "isMentorSession": false,
+            "participants": [],
+            "dailyUrl": "https://katha.daily.co/kathaa-silent-support-6250"
+        }
+    ],
+    "sessions": [
+        {
+            "id": "s1",
+            "groupId": "g1",
+            "topic": "Acceptance and Moving Forward",
+            "mentorId": "m1",
+            "mentorName": "Dr. Aradhana",
+            "mentorTitle": "Therapeutic Counselor",
+            "scheduledTime": "2026-03-29T18:00:00",
+            "duration": "60m",
+            "rsvpCount": 1,
+            "rsvps": [
+                "test_user"
+            ]
+        }
+    ],
+    "discussion_posts": [
+        {
+            "id": "dp_1774729806425",
+            "groupId": "g1",
+            "text": "Hello everyone, this is a test message.",
+            "authorId": "test_user",
+            "timestamp": "2026-03-28T15:30:06.425166",
+            "reactions": {
+                "heart": 0,
+                "hug": 0,
+                "strength": 0
+            },
+            "reactedBy": {
+                "heart": [],
+                "hug": [],
+                "strength": []
+            }
+        }
+    ]
 }

@@ -1,0 +1,38 @@
+{
+  "dr.aradhana@test.com": {
+    "password": "password123",
+    "role": "mentor",
+    "is_verified": false,
+    "active_persona": "mentor",
+    "mentor_profile": {
+      "name": "Dr. Aradhana Sharma",
+      "title": "Licensed Clinical Psychologist",
+      "cert_link": "https://linkedin.com/in/aradhana",
+      "bio": "I specialize in South Asian mental health and anxiety management. I have 10 years of experience supporting immigrant families."
+    }
+  },
+  "dr.aradhana_final@test.com": {
+    "password": "password123",
+    "role": "mentor",
+    "is_verified": false,
+    "active_persona": "mentor",
+    "mentor_profile": {
+      "name": "Dr. Aradhana Sharma",
+      "title": "Licensed Clinical Psychologist",
+      "cert_link": "https://linkedin.com/in/aradhana",
+      "bio": "I specialize in South Asian mental health and anxiety management. I have 10 years of experience supporting immigrant families."
+    }
+  },
+  "dr.aradhana_v2@test.com": {
+    "password": "password123",
+    "role": "mentor",
+    "is_verified": false,
+    "active_persona": "mentor",
+    "mentor_profile": {
+      "name": "Dr. Aradhana Sharma",
+      "title": "Licensed Clinical Psychologist",
+      "cert_link": "https://linkedin.com/in/aradhana",
+      "bio": "I specialize in South Asian mental health and anxiety management. I have 10 years of experience supporting immigrant families."
+    }
+  }
+}

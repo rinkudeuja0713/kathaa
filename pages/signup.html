@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kathaa — Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <div class="katha-wrapper">
+    <header class="site-header">
+      <div class="logo-area">
+        <span class="diya-icon">🪔</span>
+        <span class="brand-name">Kathaa</span>
+        <span class="brand-sub">कथा</span>
+      </div>
+      <nav class="primary-nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="feed.html" class="nav-link">Stories</a>
+        <a href="groups.html" class="nav-link">Groups</a>
+        <a href="tracker.html" class="nav-link">Mood diary</a>
+        <a href="profile.html" class="nav-link">My space</a>
+        <a href="login.html" class="nav-link">Login</a>
+      </nav>
+    </header>
+
+    <main style="padding: 2rem; max-width: 500px; margin: 0 auto;">
+      <div class="warm-card">
+        <h2 class="serif-heading" style="text-align: center;">Begin your journey</h2>
+        <p style="text-align: center; color: var(--muted-text); margin-bottom: 1.5rem;">Create a secure, anonymous account</p>
+
+        <form id="signupForm">
+          <div style="margin-bottom: 1.2rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem;">Email</label>
+            <input type="email" id="email" required style="width: 100%; background: rgba(14,11,8,0.6); border: 1px solid var(--border-soft); border-radius: 12px; padding: 0.8rem; color: var(--body-text); font-family: inherit;">
+          </div>
+          <div style="margin-bottom: 1.2rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem;">Password</label>
+            <input type="password" id="password" required style="width: 100%; background: rgba(14,11,8,0.6); border: 1px solid var(--border-soft); border-radius: 12px; padding: 0.8rem; color: var(--body-text); font-family: inherit;">
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%;">Create account</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem;">
+          <p style="font-size: 0.85rem; color: var(--muted-text);">Already have an account? <a href="login.html" style="color: var(--warm-gold);">Sign in</a></p>
+        </div>
+        <div id="message" style="margin-top: 1rem; text-align: center; color: var(--amber-cta);"></div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>कथा — safely held, anonymously shared.</p>
+    </footer>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBO2bzjwUo52rYAtAxqA04i3F_a_IDQejE",
+      authDomain: "kathaa-385a3.firebaseapp.com",
+      projectId: "kathaa-385a3",
+      storageBucket: "kathaa-385a3.firebasestorage.app",
+      messagingSenderId: "52566990780",
+      appId: "1:52566990780:web:e64147c95474885acbd5b9",
+      measurementId: "G-TFZG6F1VZR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const form = document.getElementById('signupForm');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          messageDiv.style.color = 'var(--warm-gold)';
+          messageDiv.innerText = 'Account created! Redirecting...';
+          setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+        })
+        .catch((error) => {
+          messageDiv.innerText = error.message;
+        });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mentor Portal — Kathaa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    .mentor-hero {
+      padding: 6rem 2rem;
+      text-align: center;
+      background: radial-gradient(circle at center, rgba(212, 129, 58, 0.08) 0%, transparent 70%);
+    }
+    .mentor-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      padding: 4rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(200, 169, 110, 0.1);
+      padding: 2rem;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+    .feature-card:hover {
+      border-color: rgba(212, 129, 58, 0.4);
+      transform: translateY(-5px);
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .cta-section {
+      background: rgba(14, 11, 8, 0.6);
+      padding: 5rem 2rem;
+      text-align: center;
+      border-radius: 30px;
+      margin: 2rem;
+      border: 1px solid rgba(200, 169, 110, 0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="katha-wrapper">
+    <header class="site-header">
+      <div class="logo-area">
+        <span class="brand-name">Kathaa</span>
+        <span class="brand-sub">Mentor Portal</span>
+      </div>
+      <nav class="primary-nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="feed.html" class="nav-link">Stories</a>
+        <a href="groups.html" class="nav-link">Groups</a>
+        <a href="mentor-signup.html" class="nav-link" style="color: var(--warm-gold);">Join as Mentor</a>
+        <a href="login.html" class="nav-link">Login</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="mentor-hero">
+        <h1 class="serif-heading" style="font-size: 3.5rem; line-height: 1.1;">Share your light.<br>Support those in the dark.</h1>
+        <p style="max-width: 700px; margin: 1.5rem auto; color: var(--muted-text); font-size: 1.1rem; line-height: 1.6;">
+          Kathaa is a safe harbor for culturally-rooted mental wellness. We are looking for licensed professionals and experienced peer supporters to facilitate growth and healing in our community.
+        </p>
+        <div style="margin-top: 2.5rem;">
+          <a href="mentor-signup.html" class="btn-primary" style="padding: 1rem 3rem; font-size: 1.1rem;">Apply to be a Mentor</a>
+        </div>
+      </section>
+
+      <section class="mentor-features">
+        <div class="feature-card">
+          <span class="feature-icon">🛡️</span>
+          <h3 class="serif-heading" style="font-size: 1.5rem; margin-bottom: 0.8rem;">Credible & Validated</h3>
+          <p style="color: var(--muted-text); font-size: 0.95rem; line-height: 1.6;">Our multi-layer verification system (AI + Manual) ensures that every mentor is qualified, ethical, and ready to support.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🎭</span>
+          <h3 class="serif-heading" style="font-size: 1.5rem; margin-bottom: 0.8rem;">Dual-Identity</h3>
+          <p style="color: var(--muted-text); font-size: 0.95rem; line-height: 1.6;">Maintain your professional credibility while having a private, 100% anonymous space for your own venting and storytelling.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🤝</span>
+          <h3 class="serif-heading" style="font-size: 1.5rem; margin-bottom: 0.8rem;">Community Impact</h3>
+          <p style="color: var(--muted-text); font-size: 0.95rem; line-height: 1.6;">Lead audio rooms, facilitate discussions, and mentor small groups in a stigma-free environment built for the South Asian diaspora.</p>
+        </div>
+      </section>
+
+      <section class="cta-section">
+        <h2 class="serif-heading" style="font-size: 2.2rem; margin-bottom: 1rem;">Ready to make a difference?</h2>
+        <p style="color: var(--muted-text); margin-bottom: 2rem;">Join a network of healers dedicated to breaking the silence.</p>
+        <a href="mentor-signup.html" class="btn-outline">Start Application →</a>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>कथा — providing breadths for those who carry the weight of stories.</p>
+    </footer>
+  </div>
+</body>
+</html>
