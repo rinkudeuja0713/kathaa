@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kathaa — Connect to Support</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    .support-hero {
+      text-align: center;
+      padding: 4rem 1.5rem 2.5rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .support-hero-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #9b59b6;
+      border: 1px solid rgba(155, 89, 182, 0.3);
+      border-radius: 20px;
+      padding: 0.3rem 0.9rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .support-hero h1 {
+      font-size: 2.4rem;
+      color: var(--cream-heading);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .support-hero p {
+      color: var(--muted-text);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .emergency-banner {
+      max-width: 820px;
+      margin: 0 auto 2.5rem;
+      padding: 0 1.5rem;
+    }
+
+    .emergency-box {
+      background: rgba(220, 80, 80, 0.08);
+      border: 1px solid rgba(220, 80, 80, 0.3);
+      border-radius: 14px;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .emergency-box .em-label {
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #e07070;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .emergency-numbers {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .emergency-number {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .emergency-number .num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      color: #f0e8d8;
+      font-weight: 600;
+      line-height: 1.1;
+    }
+
+    .emergency-number .num-label {
+      font-size: 0.72rem;
+      color: var(--muted-text);
+    }
+
+    .support-grid {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .support-section-title {
+      max-width: 820px;
+      margin: 0 auto 1rem;
+      padding: 0 1.5rem;
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted-text);
+    }
+
+    .org-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .org-card:hover {
+      border-color: rgba(155, 89, 182, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .org-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+    }
+
+    .org-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .org-icon.purple { background: rgba(155, 89, 182, 0.15); }
+    .org-icon.blue   { background: rgba(80, 130, 200, 0.15); }
+    .org-icon.green  { background: rgba(80, 180, 120, 0.15); }
+    .org-icon.amber  { background: rgba(212, 129, 58, 0.15); }
+
+    .org-info { flex: 1; min-width: 0; }
+
+    .org-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--cream-heading);
+      line-height: 1.2;
+    }
+
+    .org-type {
+      font-size: 0.72rem;
+      color: #9b59b6;
+      margin-top: 2px;
+    }
+
+    .org-desc {
+      font-size: 0.85rem;
+      color: var(--muted-text);
+      line-height: 1.55;
+    }
+
+    .org-contacts {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-top: 0.2rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .org-contact-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+    }
+
+    .org-contact-row .contact-icon {
+      font-size: 0.9rem;
+      opacity: 0.6;
+      width: 16px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .org-contact-row a {
+      color: var(--body-text);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .org-contact-row a:hover { color: #c8a96e; }
+
+    .org-contact-row .phone {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--cream-heading);
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .free-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: rgba(80, 180, 120, 0.12);
+      color: #6bc47a;
+      border-radius: 4px;
+      padding: 1px 6px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .note-box {
+      max-width: 820px;
+      margin: 0 auto 3rem;
+      padding: 0 1.5rem;
+    }
+
+    .note-inner {
+      background: rgba(155, 89, 182, 0.06);
+      border: 1px solid rgba(155, 89, 182, 0.2);
+      border-radius: 14px;
+      padding: 1.2rem 1.5rem;
+      font-size: 0.875rem;
+      color: var(--muted-text);
+      line-height: 1.6;
+    }
+
+    .note-inner strong { color: var(--body-text); }
+
+    @media (max-width: 600px) {
+      .support-hero h1 { font-size: 1.8rem; }
+      .support-grid { grid-template-columns: 1fr; }
+      .emergency-numbers { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="logo-area">
+      <span class="diya-icon">🪔</span>
+      <span class="brand-name">Kathaa</span>
+      <span class="brand-sub">कथा</span>
+    </div>
+    <nav class="primary-nav">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="feed.html" class="nav-link">Stories</a>
+      <a href="tracker.html" class="nav-link">Mood diary</a>
+      <a href="professionals.html" class="nav-link active">Get support</a>
+      <a href="profile.html" class="nav-link">My space</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section class="support-hero">
+      <div class="support-hero-tag">Safe &amp; Confidential</div>
+      <h1>You deserve real support</h1>
+      <p>
+        These are trusted organizations in Nepal that work specifically with survivors
+        of gender-based violence and harassment. All of them are confidential.
+        None of them will blame you.
+      </p>
+    </section>
+
+    <!-- Emergency strip -->
+    <div class="emergency-banner">
+      <div class="emergency-box">
+        <span class="em-label">🔴 Emergency</span>
+        <div class="emergency-numbers">
+          <div class="emergency-number">
+            <span class="num">1145</span>
+            <span class="num-label">Nepal Police Women's Cell</span>
+          </div>
+          <div class="emergency-number">
+            <span class="num">100</span>
+            <span class="num-label">Police Emergency</span>
+          </div>
+          <div class="emergency-number">
+            <span class="num">1098</span>
+            <span class="num-label">Child Helpline (under 18)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Counseling -->
+    <div class="support-section-title">Counseling &amp; Emotional Support</div>
+    <div class="support-grid">
+
+      <div class="org-card">
+        <div class="org-card-top">
+          <div class="org-icon purple">🌿</div>
+          <div class="org-info">
+            <div class="org-name">TPO Nepal</div>
+            <div class="org-type">Trauma &amp; Mental Health Counseling</div>
+          </div>
+        </div>
+        <div class="org-desc">
+          Transcultural Psychosocial Organization Nepal — specialized trauma counseling
+          for survivors of gender-based violence. Counselors understand the Nepali cultural
+          context and will not judge you.
+        </div>
+        <div class="org-contacts">
+          <div class="org-contact-row">
+            <span class="contact-icon">📞</span>
+            <span class="phone">01-4423412</span>
+          </div>
+          <div class="org-contact-row">
+            <span class="contact-icon">🌐</span>
+            <a href="https://tponepal.org" target="_blank" rel="noopener">tponepal.org</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="org-card">
+        <div class="org-card-top">
+          <div class="org-icon purple">🤝</div>
+          <div class="org-info">
+            <div class="org-name">Saathi Nepal</div>
+            <div class="org-type">GBV Counseling &amp; Shelter</div>
+          </div>
+        </div>
+        <div class="org-desc">
+          Provides counseling, temporary shelter, and support specifically for
+          survivors of gender-based violence and domestic abuse. Safe, confidential,
+          and survivor-centered.
+        </div>
+        <div class="org-contacts">
+          <div class="org-contact-row">
+            <span class="contact-icon">📞</span>
+            <span class="phone">01-4444212</span>
+          </div>
+          <div class="org-contact-row">
+            <span class="contact-icon">🌐</span>
+            <a href="https://saathinepal.org" target="_blank" rel="noopener">saathinepal.org</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="org-card">
+        <div class="org-card-top">
+          <div class="org-icon green">🏠</div>
+          <div class="org-info">
+            <div class="org-name">WOREC Nepal</div>
+            <div class="org-type">Women's Rehabilitation Centre</div>
+          </div>
+        </div>
+        <div class="org-desc">
+          Women's Rehabilitation Centre — counseling, legal aid, and rehabilitation
+          support for women who have experienced violence, harassment, or discrimination.
+        </div>
+        <div class="org-contacts">
+          <div class="org-contact-row">
+            <span class="contact-icon">📞</span>
+            <span class="phone">01-5542765</span>
+          </div>
+          <div class="org-contact-row">
+            <span class="contact-icon">🌐</span>
+            <a href="https://worecnepal.org" target="_blank" rel="noopener">worecnepal.org</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Legal -->
+    <div class="support-section-title">Legal Aid</div>
+    <div class="support-grid">
+
+      <div class="org-card">
+        <div class="org-card-top">
+          <div class="org-icon blue">⚖️</div>
+          <div class="org-info">
+            <div class="org-name">FWLD <span class="free-tag">Free</span></div>
+            <div class="org-type">Forum for Women, Law &amp; Development</div>
+          </div>
+        </div>
+        <div class="org-desc">
+          Free legal consultation and representation for women. They handle cases of
+          sexual harassment, assault, and workplace discrimination under Nepal's
+          Sexual Harassment at Workplace Prevention Act 2014.
+        </div>
+        <div class="org-contacts">
+          <div class="org-contact-row">
+            <span class="contact-icon">📞</span>
+            <span class="phone">01-4423812</span>
+          </div>
+          <div class="org-contact-row">
+            <span class="contact-icon">🌐</span>
+            <a href="https://fwld.org" target="_blank" rel="noopener">fwld.org</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="org-card">
+        <div class="org-card-top">
+          <div class="org-icon blue">🏛️</div>
+          <div class="org-info">
+            <div class="org-name">National Women Commission</div>
+            <div class="org-type">Government — Women's Rights</div>
+          </div>
+        </div>
+        <div class="org-desc">
+          The government body responsible for protecting women's rights in Nepal.
+          Can receive complaints, conduct investigations, and refer cases to
+          relevant authorities.
+        </div>
+        <div class="org-contacts">
+          <div class="org-contact-row">
+            <span class="contact-icon">📞</span>
+            <span class="phone">01-4211428</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Anti-trafficking -->
+    <div class="support-section-title">Trafficking &amp; Exploitation</div>
+    <div class="support-grid">
+
+      <div class="org-card">
+        <div class="org-card-top">
+          <div class="org-icon amber">🛡️</div>
+          <div class="org-info">
+            <div class="org-name">Maiti Nepal</div>
+            <div class="org-type">Anti-Trafficking &amp; Survivor Support</div>
+          </div>
+        </div>
+        <div class="org-desc">
+          Works to rescue and rehabilitate survivors of trafficking and sexual
+          exploitation. Provides shelter, counseling, legal aid, and vocational
+          training for survivors.
+        </div>
+        <div class="org-contacts">
+          <div class="org-contact-row">
+            <span class="contact-icon">📞</span>
+            <span class="phone">01-4479142</span>
+          </div>
+          <div class="org-contact-row">
+            <span class="contact-icon">🌐</span>
+            <a href="https://maitinepal.org" target="_blank" rel="noopener">maitinepal.org</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Important note -->
+    <div class="note-box">
+      <div class="note-inner">
+        <strong>You do not have to file a case to get support.</strong>
+        All of the organizations above offer counseling and help without requiring
+        you to report to police. Reporting is your choice, at your pace, if and when
+        you are ready. What happened to you was not your fault — and you deserve
+        support regardless of what you decide to do next.
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../js/didi.js"></script>
+</body>
+</html>
