@@ -1,6 +1,8 @@
 (function() {
   const ANON_ID_KEY = 'kathaa_anonymous_id';
-  const USER_KEY = 'kathaa_user';
+  const USER_EMAIL_KEY = 'kathaa.user.email';
+  const LOGGED_IN_KEY = 'kathaa.user.loggedIn';
+  const API_BASE = 'http://127.0.0.1:5000/api/auth';
 
   function getOrCreateAnonId() {
     let id = localStorage.getItem(ANON_ID_KEY);
@@ -11,67 +13,75 @@
     return id;
   }
 
-  // Mock user database (stored in localStorage)
-  const USERS_KEY = 'kathaa_users';
-  function getUsers() {
-    const users = localStorage.getItem(USERS_KEY);
-    return users ? JSON.parse(users) : [];
-  }
-  function saveUsers(users) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  async function signup(email, password, role = 'storyteller', mentor_profile = null) {
+    try {
+      const res = await fetch(`${API_BASE}/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, role, mentor_profile })
+      });
+      return await res.json();
+    } catch (e) {
+      return { success: false, message: 'Server error: ' + e.message };
+    }
   }
 
-  function signup(email, password) {
-    const users = getUsers();
-    if (users.find(u => u.email === email)) {
-      return { success: false, message: 'Email already exists.' };
+  async function login(email, password) {
+    try {
+      const res = await fetch(`${API_BASE}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem(USER_EMAIL_KEY, email);
+        localStorage.setItem(LOGGED_IN_KEY, 'true');
+      }
+      return data;
+    } catch (e) {
+      return { success: false, message: 'Server error: ' + e.message };
     }
-    users.push({ email, password });
-    saveUsers(users);
-    localStorage.setItem(USER_KEY, JSON.stringify({ email }));
-    return { success: true, message: 'Account created.' };
   }
 
-  function login(email, password) {
-    const users = getUsers();
-    const user = users.find(u => u.email === email && u.password === password);
-    if (!user) {
-      return { success: false, message: 'Invalid email or password.' };
-    }
-    localStorage.setItem(USER_KEY, JSON.stringify({ email }));
-    return { success: true, message: 'Logged in.' };
+  async function getProfile() {
+    const email = localStorage.getItem(USER_EMAIL_KEY);
+    if (!email) return null;
+    try {
+      const res = await fetch(`${API_BASE}/profile?email=${email}`);
+      if (res.ok) return await res.json();
+    } catch (e) { console.warn('Profile fetch failed:', e); }
+    return null;
+  }
+
+  async function switchPersona(persona) {
+    const email = localStorage.getItem(USER_EMAIL_KEY);
+    try {
+      const res = await fetch(`${API_BASE}/switch-persona`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, persona })
+      });
+      return await res.json();
+    } catch (e) { return { success: false, message: e.message }; }
   }
 
   function logout() {
-    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(USER_EMAIL_KEY);
+    localStorage.removeItem(LOGGED_IN_KEY);
   }
 
   function isLoggedIn() {
-    return localStorage.getItem(USER_KEY) !== null;
-  }
-
-  function getCurrentUser() {
-    const user = localStorage.getItem(USER_KEY);
-    return user ? JSON.parse(user) : null;
-  }
-
-  function resetPassword(email) {
-    const users = getUsers();
-    const user = users.find(u => u.email === email);
-    if (!user) {
-      return { success: false, message: 'Email not found.' };
-    }
-    return { success: true, message: 'If the email exists, a reset link has been sent.' };
+    return localStorage.getItem(LOGGED_IN_KEY) === 'true';
   }
 
   window.kathaaAuth = {
-    getUserId: getOrCreateAnonId,    // <-- this is the function we need
-    isAnonymous: true,
+    getUserId: getOrCreateAnonId,
     signup,
     login,
     logout,
     isLoggedIn,
-    getCurrentUser,
-    resetPassword
+    getProfile,
+    switchPersona
   };
 })();

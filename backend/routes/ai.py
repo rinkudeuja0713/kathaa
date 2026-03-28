@@ -38,7 +38,6 @@ def get_suggestion():
     if not user_text:
         return jsonify({'suggestion': 'Share what’s on your mind for a gentle suggestion.'})
 
-    # If no Gemini key or model, use fallback
     if not model:
         return jsonify({'suggestion': random.choice(FALLBACKS)})
 
@@ -63,3 +62,44 @@ Write a warm, validating response (2-3 sentences, max 70 words) that:
         suggestion = random.choice(FALLBACKS)
 
     return jsonify({'suggestion': suggestion})
+
+@ai_bp.route('/api/ai/verify-mentor', methods=['POST'])
+def verify_mentor():
+    data = request.json
+    title = data.get('title', '')
+    bio = data.get('bio', '')
+    
+    if not title or not bio:
+        return jsonify({'error': 'Missing title or bio'}), 400
+
+    # If no Gemini model, use a simple keyword-based heuristic
+    if not model:
+        keywords = ['counselor', 'therapist', 'doctor', 'psychologist', 'phd', 'msw', 'licensed', 'expert']
+        is_credible = any(k in title.lower() or k in bio.lower() for k in keywords)
+        return jsonify({
+            'status': 'VERIFIED' if is_credible else 'PENDING',
+            'reason': 'Verified via automated credential matching.' if is_credible else 'Requires manual review of specific expertise.'
+        })
+
+    try:
+        prompt = (
+            f"Evaluate the professional credibility of this support mentor application:\n"
+            f"Title: {title}\n"
+            f"Bio: {bio}\n\n"
+            "Criteria: Does this person sound like a legitimate professional or experienced peer supporter?\n"
+            "Return ONLY a JSON object: {\"status\": \"VERIFIED\" or \"PENDING\", \"reason\": \"short explanation\"}"
+        )
+        response = model.generate_content(prompt)
+        resp_text = response.text.strip()
+        
+        # Robust JSON extraction
+        import re
+        json_match = re.search(r'\{.*\}', resp_text, re.DOTALL)
+        if json_match:
+            result = json.loads(json_match.group(0))
+            return jsonify(result)
+        else:
+            return jsonify({'status': 'PENDING', 'reason': 'AI response format invalid, requires manual review.'})
+    except Exception as e:
+        print("AI Verification error:", e)
+        return jsonify({'status': 'PENDING', 'reason': 'AI verification encountered an error, defaulting to manual review.'})

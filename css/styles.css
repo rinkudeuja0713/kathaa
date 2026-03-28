@@ -364,3 +364,56 @@ a {
   margin: 1rem 0;
   border: 1px solid var(--border-soft);
 }
+
+/* Groups & Clubhouse */
+.groups-container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+.group-card {
+  background: var(--bg-card); border-radius: 20px; padding: 1.8rem;
+  margin-bottom: 1.25rem; box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border-soft); transition: all 0.25s ease;
+}
+.group-card:hover { transform: translateY(-3px); border-color: rgba(200, 169, 110, 0.35); }
+.group-header { display: flex; justify-content: space-between; align-items: start; gap: 1rem; }
+.group-category { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--warm-gold); opacity: 0.8; }
+
+.clubhouse-tabs { display: flex; gap: 1.5rem; border-bottom: 1px solid var(--border-soft); margin-top: 2rem; }
+.tab-btn {
+  background: none; border: none; padding: 0.8rem 0.5rem; cursor: pointer;
+  font-family: inherit; font-size: 0.95rem; color: var(--muted-text); border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.tab-btn.active { color: var(--amber-cta); border-bottom-color: var(--amber-cta); font-weight: 500; }
+
+.clubhouse-section { display: none; margin-top: 1.8rem; }
+.clubhouse-section.active { display: block; }
+
+.room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+.room-card {
+  background: var(--bg-card); border-radius: 24px; padding: 1.5rem;
+  border: 1px solid var(--border-soft); box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
+}
+.room-status { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #10b981; letter-spacing: 0.05em; }
+.room-status.empty { color: var(--muted-text); }
+.room-title { font-size: 1.2rem; margin: 0.6rem 0; color: var(--cream-heading); }
+
+.participant-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.2rem; }
+.participant-avatar {
+  width: 44px; height: 44px; border-radius: 50%; background: rgba(200, 169, 110, 0.1);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; border: 2px solid transparent; color: var(--warm-gold);
+  transition: all 0.3s;
+}
+.participant-avatar.speaking { border-color: var(--amber-cta); animation: pulse-ring 2s infinite; }
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(212, 129, 58, 0.5); }
+  70% { box-shadow: 0 0 0 10px rgba(212, 129, 58, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 129, 58, 0); }
+}
+
+.mentor-card {
+  background: linear-gradient(135deg, rgba(212, 129, 58, 0.08) 0%, rgba(24, 20, 16, 1) 100%);
+  border: 1px solid var(--border-soft); border-radius: 20px; padding: 1.5rem; margin-top: 1.2rem;
+}
+.mentor-tag { background: var(--gradient-gold); color: white; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; }

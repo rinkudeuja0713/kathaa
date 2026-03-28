@@ -59,11 +59,26 @@ node_modules/
 # Output of 'npm pack'
 *.tgz
 
-# Yarn Integrity file
-.yarn-integrity
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
-# dotenv environment variables file
+# Python
+backend/venv/
+__pycache__/
+*.pyc
+
+# Environment variables
 .env
+*.env
+
+# OS
+.DS_Store
+
+# node_modules
+node_modules/
 
 # Python cache
 __pycache__/

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Become a Mentor — Kathaa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    .signup-card {
+      max-width: 600px;
+      margin: 4rem auto;
+      padding: 3rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(200, 169, 110, 0.15);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--muted-text);
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      background: rgba(14, 11, 8, 0.5);
+      border: 1px solid rgba(200, 169, 110, 0.2);
+      border-radius: 12px;
+      padding: 0.8rem;
+      color: white;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: var(--warm-gold);
+      background: rgba(14, 11, 8, 0.8);
+    }
+    .verification-overlay {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+    }
+    .ai-orb {
+      width: 80px;
+      height: 80px;
+      background: var(--warm-gold);
+      border-radius: 50%;
+      margin: 0 auto 1.5rem;
+      filter: blur(20px);
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.2); }
+    }
+  </style>
+</head>
+<body>
+  <div class="katha-wrapper">
+    <header class="site-header">
+      <div class="logo-area">
+        <span class="brand-name">Kathaa</span>
+        <span class="brand-sub">Professional Application</span>
+      </div>
+      <nav class="primary-nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="mentor-portal.html" class="nav-link">Back to Portal</a>
+      </nav>
+    </header>
+
+    <main>
+      <div id="signup-container" class="signup-card">
+        <h2 class="serif-heading" style="font-size: 2rem; text-align: center; margin-bottom: 0.5rem;">Join as a Mentor</h2>
+        <p style="text-align: center; color: var(--muted-text); margin-bottom: 2rem;">Help us hold stories safely.</p>
+
+        <form id="mentorForm">
+          <div class="form-group">
+            <label>Login Email</label>
+            <input type="email" id="email" required placeholder="your.name@professional.com">
+          </div>
+          <div class="form-group">
+            <label>Secure Password</label>
+            <input type="password" id="password" required>
+          </div>
+          <div style="border-top: 1px solid rgba(200, 169, 110, 0.1); margin: 2rem 0;"></div>
+          
+          <div class="form-group">
+            <label>Full Professional Name</label>
+            <input type="text" id="fullName" required placeholder="Dr. Aradhana Sharma">
+          </div>
+          <div class="form-group">
+            <label>Professional Title</label>
+            <input type="text" id="title" required placeholder="Licensed Clinical Psychologist / Expert Peer Supporter">
+          </div>
+          <div class="form-group">
+            <label>Certification / LinkedIn Link</label>
+            <input type="url" id="certLink" placeholder="https://linkedin.com/in/yourprofile">
+          </div>
+          <div class="form-group">
+            <label>Short Bio (Impact & Expertise)</label>
+            <textarea id="bio" rows="4" required placeholder="Share your experience and why you want to support the Kathaa community..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem; padding: 1rem;">
+            Continue to AI Verification →
+          </button>
+        </form>
+      </div>
+
+      <div id="verification-step" class="signup-card" style="display: none; text-align: center;">
+        <div class="ai-orb"></div>
+        <h2 class="serif-heading" style="font-size: 2rem; margin-bottom: 1rem;">Audit in Progress</h2>
+        <p id="verify-status" style="color: var(--muted-text); font-style: italic;">Parsing credentials through Kathaa AI Auditor...</p>
+        <div id="result-area" style="margin-top: 2rem; display: none;">
+          <div id="badge-container" style="font-size: 4rem; margin-bottom: 1rem;">✨</div>
+          <h3 id="result-title" class="serif-heading" style="font-size: 1.8rem;">Application Verified</h3>
+          <p id="result-desc" style="margin: 1rem 0; color: var(--muted-text);"></p>
+          <button id="final-cta" class="btn-primary" style="margin-top: 1.5rem;">Go to My Space</button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>verification ensures a secure haven for every kathaa.</p>
+    </footer>
+  </div>
+
+  <script src="../js/toast.js"></script>
+  <script type="module">
+    const mentorForm = document.getElementById('mentorForm');
+    const signupContainer = document.getElementById('signup-container');
+    const verificationStep = document.getElementById('verification-step');
+    const verifyStatus = document.getElementById('verify-status');
+    const resultArea = document.getElementById('result-area');
+    const resultTitle = document.getElementById('result-title');
+    const resultDesc = document.getElementById('result-desc');
+    const badgeContainer = document.getElementById('badge-container');
+    const finalCta = document.getElementById('final-cta');
+
+    mentorForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = {
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        role: 'mentor',
+        mentor_profile: {
+          name: document.getElementById('fullName').value,
+          title: document.getElementById('title').value,
+          cert_link: document.getElementById('certLink').value,
+          bio: document.getElementById('bio').value
+        }
+      };
+
+      // 1. Show verification step
+      signupContainer.style.display = 'none';
+      verificationStep.style.display = 'block';
+
+      try {
+        // 2. Simulate AI verification call
+        verifyStatus.innerText = "Analyzing professional background...";
+        const aiRes = await fetch('http://127.0.0.1:5000/api/ai/verify-mentor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            title: formData.mentor_profile.title, 
+            bio: formData.mentor_profile.bio 
+          })
+        });
+        const aiData = await aiRes.json();
+        
+        // 3. Register user with the verification result
+        verifyStatus.innerText = "Storing verified credentials...";
+        const signupRes = await fetch('http://127.0.0.1:5000/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...formData,
+            is_verified: aiData.status === 'VERIFIED'
+          })
+        });
+        
+        if (!signupRes.ok) throw new Error('Registration failed');
+
+        // 4. Show result
+        setTimeout(() => {
+          verifyStatus.style.display = 'none';
+          resultArea.style.display = 'block';
+          
+          if (aiData.status === 'VERIFIED') {
+            resultTitle.innerText = "Application Verified";
+            resultDesc.innerText = aiData.reason || "Your professional credentials have been automatically validated. Welcome to the mentor community!";
+            badgeContainer.innerText = "🎗️";
+            finalCta.innerText = "Complete Setup";
+          } else {
+            resultTitle.innerText = "Manual Review Required";
+            resultDesc.innerText = "Our AI auditor needs a human check to confirm your specific expertise area. You can still use the platform in storyteller mode while you wait.";
+            badgeContainer.innerText = "⏳";
+            finalCta.innerText = "Enter Kathaa";
+          }
+          
+          localStorage.setItem('kathaa.user.email', formData.email);
+          localStorage.setItem('kathaa.user.loggedIn', 'true');
+        }, 2000);
+
+      } catch (err) {
+        alert("Verification error: " + err.message);
+        signupContainer.style.display = 'block';
+        verificationStep.style.display = 'none';
+      }
+    });
+
+    finalCta.addEventListener('click', () => {
+      window.location.href = 'profile.html';
+    });
+  </script>
+</body>
+</html>
