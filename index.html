@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kathaa — कथा</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <div class="katha-wrapper">
+    <header class="site-header">
+      <div class="logo-area">
+        <span class="brand-name">Kathaa</span>
+        <span class="brand-sub">कथा</span>
+      </div>
+      <!-- <span class="diya-icon corner-diya">🪔</span> -->
+      <nav class="primary-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="pages/feed.html" class="nav-link">Stories</a>
+        <a href="pages/tracker.html" class="nav-link">Mood diary</a>
+          <a href="pages/profile.html" class="nav-link" id="navProfile">My space</a>
+          <a href="pages/login.html" class="nav-link" id="navLogin">Login</a>
+      </nav>
+    </header>
+
+    <main class="landing-main">
+      <div class="hero-glow">
+        <div class="hero-content">
+          <h1 class="hero-title">Your story,<br>held in silence no more.</h1>
+          <p class="hero-tagline">In many communities, we carry weight without speaking. Kathaa gives you a gentle, anonymous shelter — where feelings find words, and words find belonging.</p>
+          <div class="hero-actions">
+            <a href="pages/feed.html" class="btn-primary">✨ share anonymously</a>
+            <a href="pages/tracker.html" class="btn-outline">🌿 track your mood</a>
+            <a href="pages/login.html" class="btn-outline" style="margin-left:0.5rem;">🔐 Login</a>
+          </div>
+          <div class="validation-glow-strip">
+            <span class="glow-text">🕯️ 100% anonymous · stigma-free · culturally rooted</span>
+          </div>
+        </div>
+        <div class="hero-lamp">
+          <span class="floating-diya">🪔</span>
+        </div>
+      </div>
+      <section class="home-feed-preview" style="margin:2.5rem 0 1.5rem 0;">
+        <h2 class="serif-heading" style="font-size:1.3rem;margin-bottom:0.7rem;">Recent Stories</h2>
+        <div id="feed" class="feed-grid" style="gap:1rem;"></div>
+        <div style="margin-top:0.7rem;text-align:right;">
+          <a href="pages/feed.html" class="btn-outline">See all stories →</a>
+        </div>
+      </section>
+      <div class="landing-quote">
+        <p>“What is felt deeply is never alone — here, every Kathaa finds echoes.”</p>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <p>a safe harbor for the heart — कथा · every story matters</p>
+    </footer>
+  <script type="module" src="js/feed.js"></script>
+  <script>
+    // Simple login state check: if user is logged in, show Profile instead of Login
+    // Replace this with your real auth logic as needed
+    function isUserLoggedIn() {
+      // Example: check for a token or userId in localStorage
+      return !!localStorage.getItem('kathaa.user.loggedIn');
+    }
+    function updateNavForLogin() {
+      const navLogin = document.getElementById('navLogin');
+      const navProfile = document.getElementById('navProfile');
+      if (isUserLoggedIn()) {
+        if (navLogin) navLogin.style.display = 'none';
+        if (navProfile) navProfile.style.display = '';
+      } else {
+        if (navLogin) navLogin.style.display = '';
+        if (navProfile) navProfile.style.display = '';
+      }
+    }
+      document.addEventListener('DOMContentLoaded', updateNavForLogin);
+    window.addEventListener('storage', updateNavForLogin);
+  </script>
+  </div>
+</body>
+</html>

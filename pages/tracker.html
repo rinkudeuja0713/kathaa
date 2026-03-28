@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kathaa — Mood Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <div class="katha-wrapper">
+    <header class="site-header"><div class="logo-area"><span class="diya-icon">🪔</span><span class="brand-name">Kathaa</span><span class="brand-sub">कथा</span></div>
+  <nav class="primary-nav"><a href="../index.html" class="nav-link">Home</a><a href="feed.html" class="nav-link">Stories</a><a href="tracker.html" class="nav-link">Mood diary</a><a href="profile.html" class="nav-link">My space</a><a href="login.html" class="nav-link">Login</a></nav></header>
+    <main style="padding: 2rem;">
+      <div class="warm-card">
+        <h2 class="serif-heading">🌱 How are you feeling today?</h2>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0;">
+          <button data-mood="😊 Good" data-score="5" class="mood-btn">😊 Good</button>
+          <button data-mood="😐 Okay" data-score="4" class="mood-btn">😐 Okay</button>
+          <button data-mood="😔 Low" data-score="2" class="mood-btn">😔 Low</button>
+          <button data-mood="😰 Anxious" data-score="3" class="mood-btn">😰 Anxious</button>
+          <button data-mood="😤 Stressed" data-score="3" class="mood-btn">😤 Stressed</button>
+          <button data-mood="😢 Sad" data-score="2" class="mood-btn">😢 Sad</button>
+        </div>
+        <button id="logMoodBtn" class="btn-primary">Log today's mood</button>
+      </div>
+      <div class="chart-container">
+        <canvas id="weeklyMoodChart" width="400" height="200" style="background: transparent;"></canvas>
+      </div>
+      <div class="warm-card" style="margin-top:1rem;">
+        <h3 class="serif-heading">📔 recent mood notes</h3>
+        <div id="moodHistoryList" style="margin-top:0.8rem;"></div>
+      </div>
+    </main>
+    <footer class="site-footer"><p>कथा — your inner weather matters</p></footer>
+  </div>
+  <script src="../js/auth.js"></script>
+  <script src="../js/moodTracker.js"></script>
+  <script>
+    let moodChart = null;
+    function updateChart() {
+      const weekData = window.kathaaMood.getLast7DaysMood();
+      const labels = weekData.map(d => d.date.slice(5));
+      const scores = weekData.map(d => d.score !== null ? d.score : null);
+      const ctx = document.getElementById('weeklyMoodChart').getContext('2d');
+      if (moodChart) moodChart.destroy();
+      moodChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets: [{ label: 'mood score (5=good, 1=low)', data: scores, borderColor: '#d4813a', backgroundColor: 'rgba(212,129,58,0.1)', borderWidth: 2, pointBackgroundColor: '#c8a96e', tension: 0.2, fill: true }] },
+        options: { scales: { y: { min: 1, max: 5, grid: { color: 'rgba(200,169,110,0.2)' }, ticks: { color: '#d4c9b8' } }, x: { ticks: { color: '#d4c9b8' }, grid: { color: 'rgba(200,169,110,0.1)' } } }, plugins: { legend: { labels: { color: '#c8a96e' } } } }
+      });
+      const historyDiv = document.getElementById('moodHistoryList');
+      const logs = window.kathaaMood.getMoodLogs().slice(-5).reverse();
+      if(logs.length) historyDiv.innerHTML = logs.map(l => `<div style="border-bottom:1px solid var(--border-soft); padding:0.5rem 0;">${l.date} → ${l.mood}</div>`).join('');
+      else historyDiv.innerHTML = '<p class="muted-text">No mood entries yet. Start tracking ✨</p>';
+    }
+
+    document.querySelectorAll('.mood-btn').forEach(btn => {
+      btn.addEventListener('click', () => { document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); });
+    });
+document.getElementById('logMoodBtn').onclick = () => {
+  const selected = document.querySelector('.mood-btn.selected');
+  if (!selected) { alert('Please select a mood'); return; }
+  const moodText = selected.dataset.mood;
+  const score = parseInt(selected.dataset.score);
+  const userId = window.kathaaAuth.getUserId();
+  window.kathaaMood.logMood(moodText, score, userId);
+  updateChart();
+  alert('✨ Mood logged safely. you’re seen.');
+};
+    updateChart();
+  </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kathaa — Stories</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <div class="katha-wrapper">
+    <header class="site-header">
+      <div class="logo-area"><span class="diya-icon">🪔</span><span class="brand-name">Kathaa</span><span class="brand-sub">कथा</span></div>
+      <nav class="primary-nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="feed.html" class="nav-link">Stories</a>
+        <a href="tracker.html" class="nav-link">Mood diary</a>
+        <a href="profile.html" class="nav-link">My space</a>
+        <a href="login.html" class="nav-link">Login</a>
+      </nav>
+    </header>
+    <main style="padding: 1.5rem 2rem;">
+      <div class="warm-card" style="margin-bottom: 2rem;">
+        <h2 class="serif-heading" style="margin-bottom: 0.5rem;">share your kathaa</h2>
+        <textarea id="postTextarea" class="post-textarea" rows="3" placeholder="What’s weighing on your heart? write freely..."></textarea>
+        <div class="tag-group" id="tagSelector">
+          <button data-tag="stress" class="mood-tag">😥 Stress</button>
+          <button data-tag="anxiety" class="mood-tag">😰 Anxiety</button>
+          <button data-tag="sadness" class="mood-tag">😢 Sadness</button>
+          <button data-tag="loneliness" class="mood-tag">🕯️ Loneliness</button>
+          <button data-tag="burnout" class="mood-tag">⚡ Burnout</button>
+        </div>
+        <button id="publishPostBtn" class="btn-primary" style="margin-top: 0.5rem;">Post anonymously 🪔</button>
+        <div id="validationArea"></div>
+      </div>
+
+      <div class="filter-bar" style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+        <button data-filter="all" class="filter-chip active">All stories</button>
+        <button data-filter="stress" class="filter-chip">Stress</button>
+        <button data-filter="anxiety" class="filter-chip">Anxiety</button>
+        <button data-filter="sadness" class="filter-chip">Sadness</button>
+        <button data-filter="loneliness" class="filter-chip">Loneliness</button>
+        <button data-filter="burnout" class="filter-chip">Burnout</button>
+      </div>
+
+      <div id="feedContainer" class="feed-grid" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+
+      <div class="warm-card" style="margin-top: 2rem;">
+        <h3 class="serif-heading" style="font-size: 1.4rem;">🌿 gentle support</h3>
+        <div id="supportSuggestions" class="support-grid"></div>
+      </div>
+    </main>
+    <footer class="site-footer"><p>a safe harbor for the heart — कथा · every story matters</p></footer>
+  </div>
+
+  <!-- auth.js must be loaded first (defines window.kathaaAuth) -->
+  <script src="../js/auth.js"></script>
+  <script type="module">
+    import { getPosts, createPost, getAISuggestion } from '../js/api.js';
+
+    let currentFilter = 'all';
+    let selectedTags = [];
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      });
+    }
+
+    function getEmojiForTags(tags) {
+      if (tags.includes('anxiety')) return '😰';
+      if (tags.includes('stress')) return '😤';
+      if (tags.includes('sadness')) return '😢';
+      if (tags.includes('loneliness')) return '😔';
+      if (tags.includes('burnout')) return '😞';
+      return '🪔';
+    }
+
+    async function renderFeed() {
+      let posts;
+      if (currentFilter === 'all') {
+        posts = await getPosts();
+      } else {
+        const all = await getPosts();
+        posts = all.filter(p => p.tags.includes(currentFilter));
+      }
+      const container = document.getElementById('feedContainer');
+      if (!posts.length) {
+        container.innerHTML = '<div class="warm-card" style="text-align:center;">✨ No stories yet. Be the first to share.</div>';
+        return;
+      }
+
+      const allPosts = await getPosts(); // for similarity calculation
+      container.innerHTML = posts.map(post => {
+        const similarCount = allPosts.filter(p => {
+          if (p.id === post.id) return false;
+          const timestamp = new Date(p.timestamp).getTime();
+          const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+          if (timestamp < oneWeekAgo) return false;
+          return p.tags.some(tag => post.tags.includes(tag));
+        }).length;
+
+        return `
+          <div class="warm-card">
+            <div style="display:flex; gap: 1rem; align-items:center; margin-bottom: 0.6rem;">
+              <span style="font-size:1.8rem;">${post.moodEmoji || '🪔'}</span>
+              <span style="font-size:0.7rem; color:var(--muted-text);">${new Date(post.timestamp).toLocaleString()}</span>
+            </div>
+            <p style="margin-bottom: 0.8rem;">${escapeHtml(post.text)}</p>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom: 0.4rem;">
+              ${post.tags.map(t => `<span style="background:rgba(200,169,110,0.1); padding:0.2rem 0.7rem; border-radius:20px; font-size:0.7rem;">#${t}</span>`).join('')}
+            </div>
+            <div class="post-count" style="font-size:0.8rem; color:var(--warm-gold);">❤️ ${similarCount} people feel this way this week</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateTagSelection() {
+      document.querySelectorAll('#tagSelector .mood-tag').forEach(btn => {
+        const tag = btn.dataset.tag;
+        if (selectedTags.includes(tag)) btn.classList.add('selected');
+        else btn.classList.remove('selected');
+      });
+    }
+
+    function renderSupportSuggestions() {
+      const suggestions = [
+        { emoji: "🌬️", title: "Box breathing", desc: "Inhale 4 sec, hold 4, exhale 4 — repeat 5 times." },
+        { emoji: "📖", title: "One line journal", desc: "Write just one honest sentence about today." },
+        { emoji: "💧", title: "Hydrate gently", desc: "Sip warm water with lemon — small ritual of care." },
+        { emoji: "🌙", title: "Sleep ritual", desc: "Dim lights, no screen 30 min before bed." }
+      ];
+      const container = document.getElementById('supportSuggestions');
+      container.innerHTML = suggestions.map(s => `
+        <div class="support-card">
+          <span class="support-emoji">${s.emoji}</span>
+          <strong style="color:var(--warm-gold);">${s.title}</strong>
+          <p style="font-size:0.8rem; margin-top:0.3rem;">${s.desc}</p>
+        </div>
+      `).join('');
+    }
+
+    const postBtn = document.getElementById('publishPostBtn');
+    if (postBtn) {
+      postBtn.onclick = async () => {
+        const text = document.getElementById('postTextarea').value.trim();
+        if (!text) {
+          alert('Please share something from your heart.');
+          return;
+        }
+        if (selectedTags.length === 0) {
+          alert('Choose a mood tag so your story finds similar souls.');
+          return;
+        }
+
+        try {
+          if (!window.kathaaAuth || typeof window.kathaaAuth.getUserId !== 'function') {
+            alert('Authentication error. Please refresh the page.');
+            return;
+          }
+          const userId = window.kathaaAuth.getUserId();
+
+          const postData = {
+            text,
+            tags: selectedTags,
+            moodEmoji: getEmojiForTags(selectedTags),
+            authorId: userId,
+            timestamp: new Date().toISOString()
+          };
+
+          await createPost(postData);
+
+          document.getElementById('postTextarea').value = '';
+          selectedTags = [];
+          updateTagSelection();
+          await renderFeed();
+
+          // Show AI suggestion if available
+          try {
+            const ai = await getAISuggestion(text);
+            const valDiv = document.getElementById('validationArea');
+            valDiv.innerHTML = `
+              <div class="glow-validate">
+                ✨ Your story has been heard. You are not alone.<br>
+                🕯️ <em>${ai.suggestion}</em>
+              </div>
+            `;
+            setTimeout(() => { valDiv.innerHTML = ''; }, 5000);
+          } catch (aiErr) {
+            const valDiv = document.getElementById('validationArea');
+            valDiv.innerHTML = `
+              <div class="glow-validate">
+                ✨ Your story has been heard. You are not alone.
+              </div>
+            `;
+            setTimeout(() => { valDiv.innerHTML = ''; }, 5000);
+          }
+        } catch (err) {
+          console.error('Error posting story:', err);
+          alert('Could not post. Make sure the backend is running at http://localhost:5000');
+        }
+      };
+    } else {
+      console.error('Post button not found!');
+    }
+
+    // Tag selection
+    document.querySelectorAll('#tagSelector .mood-tag').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tagVal = btn.dataset.tag;
+        if (selectedTags.includes(tagVal)) {
+          selectedTags = selectedTags.filter(t => t !== tagVal);
+        } else {
+          if (selectedTags.length < 2) selectedTags.push(tagVal);
+          else alert('You can add up to 2 tags');
+        }
+        updateTagSelection();
+      });
+    });
+
+    // Filter chips
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', async () => {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentFilter = chip.dataset.filter;
+        await renderFeed();
+      });
+    });
+
+    // Initial load
+    renderFeed();
+    renderSupportSuggestions();
+  </script>
+</body>
+</html>
