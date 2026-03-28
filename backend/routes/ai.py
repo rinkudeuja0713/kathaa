@@ -17,18 +17,18 @@ else:
 
 ai_bp = Blueprint('ai', __name__)
 
-# Fallback suggestions (rotates randomly) — longer, warm, Nepali student focused
+# Fallback suggestions (rotates randomly) — for Nepali women sharing experiences of harassment, abuse, and silence
 FALLBACKS = [
-    "Sathi, your courage to share this burden matters more than you know. You're not alone — many of us feel this same weight.",
-    "The homesickness you're carrying, the guilt of being away, the pressure from home — sathi, others know this pain too. Your kathaa just echoed through our community.",
-    "Breathe, sathi. Rest is not giving up. Sometimes the bravest thing is admitting we're struggling. You showed that strength today.",
-    "Write one honest sentence to yourself tonight. That's enough. Tomorrow can be stronger. For now, sathi, be gentle.",
-    "Someone back home is thinking of you, even if you can't reach them right now. And here, your sathi family sees you.",
-    "Call home if you can, sathi. Even a short voice message to hear a loved one's voice can heal more than you know.",
-    "Your feelings are valid, sathi. The homesickness, the money stress, the culture shock — it's all real. You're allowed to struggle.",
-    "Make yourself chai and sit quietly, sathi. That simple act of self-care — small as it is — matters. You matter.",
-    "You are stronger than the struggles you carry, sathi. This moment will pass. And you'll find Nepali sathi here who understand.",
-    "Your kathaa echoes here, sathi. Right now, another Nepali student reads this and realizes they're not alone either. You're helping them by being brave."
+    "What happened to you was not your fault. The shame was never yours to carry — it belongs to those who hurt you.",
+    "You just did something incredibly brave. Speaking it, even anonymously, even once — that matters. You are believed here.",
+    "So many women carry this exact weight in silence. You are not alone in this, even when it feels that way.",
+    "You did nothing wrong. The way you dressed, where you were, what you said — none of it invited what happened to you.",
+    "The people who told you to stay quiet were protecting themselves, not you. Your truth deserves to be heard.",
+    "You are not weak for staying. You are not stupid for trusting. You are not to blame for any of this.",
+    "Healing is not linear and it does not have a deadline. Be as gentle with yourself today as you would be with someone you love.",
+    "You survived something real. Writing it here took courage. You are seen, and you are not alone.",
+    "What was done to you was wrong. Full stop. You deserved — and still deserve — to be safe.",
+    "Your story matters. Not just for you, but for every woman who reads it and feels less alone because of your courage."
 ]
 
 @ai_bp.route('/api/ai/suggest', methods=['POST'])
@@ -43,18 +43,17 @@ def get_suggestion():
         return jsonify({'suggestion': random.choice(FALLBACKS)})
 
     try:
-        # Gemini prompt for Nepali students abroad — warm, longer, personal
-        prompt = f"""You are a compassionate listener in a community of Nepali students studying abroad.
-Someone shared: "{user_text}"
+        prompt = f"""You are a compassionate, trauma-informed listener on Kathaa — a safe anonymous platform for Nepali women to share experiences of harassment, sexual violence, domestic abuse, and being silenced or blamed.
 
-Write a warm, personal response (2-3 sentences, max 70 words) that:
-- Opens with "Sathi," 
-- Validates their specific experience (homesickness, money stress, loneliness, culture shock)
-- Acknowledges they're not alone — other Nepali students feel this too
-- Offers ONE small, practical comfort (call home, make chai, rest, etc.)
-- Closes with warmth, not clinical advice
+Someone just shared: "{user_text}"
 
-Sound like a caring Nepali friend who truly gets the abroad struggle."""
+Write a warm, validating response (2-3 sentences, max 70 words) that:
+- Affirms that what happened was not their fault
+- Acknowledges their specific experience without minimising it
+- Reminds them they are not alone and they are believed
+- Does NOT give clinical advice, legal instructions, or tell them what to do
+- Does NOT use "Sathi" — speak to them directly and warmly as an equal
+- Sounds like a trusted woman who truly understands, not a helpline script"""
         response = model.generate_content(prompt)
         suggestion = response.text.strip()
         if not suggestion:

@@ -25,11 +25,6 @@
       font-family: 'DM Sans', sans-serif;
       color: var(--body-text);
     }
-    .katha-toast .toast-emoji {
-      font-size: 1.4rem;
-      margin-right: 0.5rem;
-      filter: drop-shadow(0 0 4px var(--amber-cta));
-    }
     .katha-toast .toast-message {
       font-size: 0.9rem;
       line-height: 1.4;
@@ -57,7 +52,7 @@
 <body>
   <div class="katha-wrapper">
     <header class="site-header">
-      <div class="logo-area"><span class="diya-icon">🪔</span><span class="brand-name">Kathaa</span><span class="brand-sub">कथा</span></div>
+      <div class="logo-area"><span class="brand-name">Kathaa</span><span class="brand-sub">कथा</span></div>
       <nav class="primary-nav">
         <a href="../index.html" class="nav-link">Home</a>
         <a href="feed.html" class="nav-link">Stories</a>
@@ -70,31 +65,31 @@
     <main style="padding: 1.5rem 2rem;">
       <div class="warm-card" style="margin-bottom: 2rem;">
         <h2 class="serif-heading" style="margin-bottom: 0.5rem;">share your kathaa</h2>
-        <textarea id="postTextarea" class="post-textarea" rows="3" placeholder="What’s weighing on your heart? write freely..."></textarea>
+        <textarea id="postTextarea" class="post-textarea" rows="3" placeholder="Your story is safe here. No names, no judgement — speak freely..."></textarea>
         <div class="tag-group" id="tagSelector">
-          <button data-tag="homesick" class="mood-tag">🏠 Homesick</button>
-          <button data-tag="anxious" class="mood-tag">💢 Anxious</button>
-          <button data-tag="lonely" class="mood-tag">🕯️ Lonely</button>
-          <button data-tag="financial" class="mood-tag">💰 Financial Stress</button>
-          <button data-tag="culture-shock" class="mood-tag">🇳🇵 Culture Shock</button>
+          <button data-tag="harassed" class="mood-tag">Harassed</button>
+          <button data-tag="silenced" class="mood-tag">Silenced</button>
+          <button data-tag="blamed" class="mood-tag">Blamed</button>
+          <button data-tag="domestic" class="mood-tag">Domestic abuse</button>
+          <button data-tag="assault" class="mood-tag">Assault</button>
         </div>
-        <button id="publishPostBtn" class="btn-primary" style="margin-top: 0.5rem;">Post anonymously 🪔</button>
+        <button id="publishPostBtn" class="btn-primary" style="margin-top: 0.5rem;">Post anonymously</button>
         <div id="validationArea"></div>
       </div>
 
       <div class="filter-bar" style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
         <button data-filter="all" class="filter-chip active">All stories</button>
-        <button data-filter="homesick" class="filter-chip">Homesick</button>
-        <button data-filter="anxious" class="filter-chip">Anxious</button>
-        <button data-filter="lonely" class="filter-chip">Lonely</button>
-        <button data-filter="financial" class="filter-chip">Financial Stress</button>
-        <button data-filter="culture-shock" class="filter-chip">Culture Shock</button>
+        <button data-filter="harassed" class="filter-chip">Harassed</button>
+        <button data-filter="silenced" class="filter-chip">Silenced</button>
+        <button data-filter="blamed" class="filter-chip">Blamed</button>
+        <button data-filter="domestic" class="filter-chip">Domestic abuse</button>
+        <button data-filter="assault" class="filter-chip">Assault</button>
       </div>
 
       <div id="feedContainer" class="feed-grid" style="display: flex; flex-direction: column; gap: 1rem;"></div>
 
       <div class="warm-card" style="margin-top: 2rem;">
-        <h3 class="serif-heading" style="font-size: 1.4rem;">🌿 gentle support</h3>
+        <h3 class="serif-heading" style="font-size: 1.4rem;">gentle support</h3>
         <div id="supportSuggestions" class="support-grid"></div>
       </div>
     </main>
@@ -118,15 +113,6 @@
       });
     }
 
-    function getEmojiForTags(tags) {
-      if (tags.includes('anxious')) return '💢';
-      if (tags.includes('homesick')) return '🏠';
-      if (tags.includes('lonely')) return '🕯️';
-      if (tags.includes('financial')) return '💰';
-      if (tags.includes('culture-shock')) return '🇳🇵';
-      return '🪔';
-    }
-
     async function renderFeed() {
       let posts;
       if (currentFilter === 'all') {
@@ -137,7 +123,7 @@
       }
       const container = document.getElementById('feedContainer');
       if (!posts.length) {
-        container.innerHTML = '<div class="warm-card" style="text-align:center;">✨ No stories yet. Be the first to share.</div>';
+        container.innerHTML = '<div class="warm-card" style="text-align:center;">No stories yet. Be the first to share.</div>';
         return;
       }
       const allPosts = await getPosts();
@@ -152,14 +138,13 @@
         return `
           <div class="warm-card">
             <div style="display:flex; gap:1rem; align-items:center; margin-bottom:0.6rem;">
-              <span style="font-size:1.8rem;">${post.moodEmoji || '🪔'}</span>
               <span style="font-size:0.7rem; color:var(--muted-text);">${new Date(post.timestamp).toLocaleString()}</span>
             </div>
             <p style="margin-bottom:0.8rem;">${escapeHtml(post.text)}</p>
             <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.4rem;">
               ${post.tags.map(t => `<span style="background:rgba(200,169,110,0.1); padding:0.2rem 0.7rem; border-radius:20px; font-size:0.7rem;">#${t}</span>`).join('')}
             </div>
-            <div class="post-count" style="font-size:0.8rem; color:var(--warm-gold);">❤️ ${similarCount} people feel this way this week</div>
+            <div class="post-count" style="font-size:0.8rem; color:var(--warm-gold);">${similarCount} people feel this way this week</div>
           </div>
         `;
       }).join('');
@@ -175,15 +160,14 @@
 
     function renderSupportSuggestions() {
       const suggestions = [
-        { emoji: "🌬️", title: "Box breathing", desc: "Inhale 4 sec, hold 4, exhale 4 — repeat 5 times." },
-        { emoji: "📖", title: "One line journal", desc: "Write just one honest sentence about today." },
-        { emoji: "💧", title: "Hydrate gently", desc: "Sip warm water with lemon — small ritual of care." },
-        { emoji: "🌙", title: "Sleep ritual", desc: "Dim lights, no screen 30 min before bed." }
+        { title: "You are believed", desc: "What happened to you was not your fault. You deserve to be heard." },
+        { title: "Grounding breath", desc: "Inhale 4 sec, hold 4, exhale 4 — repeat 5 times to feel safe in your body." },
+        { title: "Nepal helpline", desc: "Women's Rehabilitation Centre (WOREC): 01-4269995. You can call." },
+        { title: "Be gentle with yourself", desc: "Healing is not linear. Rest, cry, and come back — all of it is allowed." }
       ];
       const container = document.getElementById('supportSuggestions');
       container.innerHTML = suggestions.map(s => `
         <div class="support-card">
-          <span class="support-emoji">${s.emoji}</span>
           <strong style="color:var(--warm-gold);">${s.title}</strong>
           <p style="font-size:0.8rem; margin-top:0.3rem;">${s.desc}</p>
         </div>
@@ -191,30 +175,27 @@
     }
 
     const WAITING_MESSAGES = [
-      "🕯️ Holding your kathaa safely...",
-      "🕯️ Lighting a diya for your courage...",
-      "🕯️ Your story is being cradled in gentle hands...",
-      "🕯️ Gathering warmth for your heart..."
+      "Holding your kathaa safely...",
+      "Your story is being cradled in gentle hands...",
+      "Gathering warmth for your heart..."
     ];
 
     const FALLBACK_VALIDATIONS = [
-      "Your courage to share matters. You are not alone in this.",
-      "This weight you carry — many hearts know it. You are seen.",
-      "Breathe, friend. Even hard things pass. Be gentle with yourself.",
-      "Write one honest sentence today. That is enough.",
-      "Your feelings are valid. Rest is not laziness; it's wisdom.",
-      "Chai and quiet. Sometimes that's all we need to keep going.",
-      "You are stronger than you believe. This moment will change.",
-      "Your kathaa echoes. Others feel this too. You're never alone."
+      "What happened to you was not your fault. You are believed.",
+      "Speaking up takes immense courage. You are not alone in this.",
+      "Your voice matters. The silence ends here, with you.",
+      "You did nothing wrong. The shame belongs to those who hurt you.",
+      "So many women carry this quietly. You sharing helps others feel less alone.",
+      "You are brave. You are worthy of safety, of dignity, of justice.",
+      "Your story matters. You matter. Kathaa holds you with care.",
+      "Healing looks different for everyone. Be gentle with yourself today."
     ];
 
     function randomFrom(list) {
       return list[Math.floor(Math.random() * list.length)];
     }
 
-    // Toast helper
-    function showToast(message, emoji = "🕯️", duration = 5000, hasButton = false) {
-      // Remove existing toast
+    function showToast(message, duration = 5000, hasButton = false) {
       const existing = document.querySelector('.katha-toast');
       if (existing) existing.remove();
 
@@ -222,7 +203,7 @@
 
       const toast = document.createElement('div');
       toast.className = 'katha-toast';
-      
+
       const buttonHTML = hasButton ? `
         <button onclick="this.closest('.katha-toast').classList.add('fade-out'); setTimeout(() => this.closest('.katha-toast').remove(), 300);" style="
           background: var(--warm-gold);
@@ -237,22 +218,18 @@
           transition: all 0.2s;
         " onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">I see you</button>
       ` : '';
-      
+
       toast.innerHTML = `
         <div style="display: flex; align-items: flex-start; gap: 0.6rem; flex-direction: column;">
-          <div style="display: flex; align-items: center; gap: 0.6rem;">
-            <span class="toast-emoji">${emoji}</span>
-            <div class="toast-message">${escapeHtml(message)}</div>
-          </div>
+          <div class="toast-message">${escapeHtml(message)}</div>
           ${buttonHTML}
         </div>
       `;
       document.body.appendChild(toast);
 
-      // Only auto-timeout if no button (button is for longer, important messages)
       if (!hasButton) {
         setTimeout(() => {
-          if (toast.parentElement) { // Check if still in DOM
+          if (toast.parentElement) {
             toast.classList.add('fade-out');
             setTimeout(() => {
               if (toast.parentElement) toast.remove();
@@ -279,7 +256,7 @@
       postBtn.onclick = async () => {
         const text = document.getElementById('postTextarea').value.trim();
         if (!text) { alert('Please share something from your heart.'); return; }
-        if (selectedTags.length === 0) { alert('Choose a mood tag so your story finds similar souls.'); return; }
+        if (selectedTags.length === 0) { alert('Choose a tag so your story finds similar souls.'); return; }
 
         try {
           if (!window.kathaaAuth || typeof window.kathaaAuth.getUserId !== 'function') {
@@ -288,14 +265,11 @@
           }
           const userId = window.kathaaAuth.getUserId();
 
-          // Immediate feedback so users see a toast even while we save
-          showToast(randomFrom(WAITING_MESSAGES), '🕯️', 5000);
+          showToast(randomFrom(WAITING_MESSAGES), 5000, true);
 
-          // Save post to backend
           const postData = {
             text,
             tags: selectedTags,
-            moodEmoji: getEmojiForTags(selectedTags),
             authorId: userId,
             timestamp: new Date().toISOString()
           };
@@ -305,36 +279,31 @@
             window.kathaaPosts.addNewPost(text, selectedTags, userId);
           }
 
-          // Clear form and refresh feed
           document.getElementById('postTextarea').value = '';
           selectedTags = [];
           updateTagSelection();
           await renderFeed();
 
-          // Update toast with a placeholder while waiting for AI
-          showToast('✨ Your story is shared. Gathering a gentle thought...', '⏳', 5000);
+          showToast('Your story is shared. Gathering a gentle thought...', 5000, true);
 
-          // Try to get AI suggestion via backend
           let suggestion = await fetchAISuggestionText(text);
           if (!suggestion) {
             suggestion = randomFrom(FALLBACK_VALIDATIONS);
           }
 
-          // Update the toast with the final message — with button so user has time to read
-          showToast(suggestion, "✨", 5000, true);
+          showToast(suggestion, 5000, true);
 
-          // Also show validation area inside the card
           const valDiv = document.getElementById('validationArea');
           valDiv.innerHTML = `
             <div class="glow-validate">
-              ✨ Your story has been heard. You are not alone.<br>
-              🕯️ <em>${escapeHtml(suggestion)}</em>
+              Your story has been heard. You are not alone.<br>
+              <em>${escapeHtml(suggestion)}</em>
             </div>
           `;
           setTimeout(() => { valDiv.innerHTML = ''; }, 5000);
         } catch (err) {
           console.error('Error posting story:', err);
-          showToast('⚠️ Could not save your kathaa. Please ensure the support service is running.', '⚠️', 5000);
+          showToast('Could not save your kathaa. Please ensure the support service is running.', 5000);
           alert('Could not post. Make sure the backend is running at http://localhost:5000');
         }
       };
