@@ -20,7 +20,7 @@
         <a href="../index.html" class="nav-link">Home</a>
         <a href="feed.html" class="nav-link">Stories</a>
         <a href="tracker.html" class="nav-link">Mood diary</a>
-        <a href="professionals.html" class="nav-link nav-link-support">Get support</a>
+        <a href="professionals.html" class="nav-link">Get support</a>
         <a href="profile.html" class="nav-link">My space</a>
         <a href="login.html" class="nav-link">Login</a>
       </nav>
@@ -30,7 +30,7 @@
       <!-- Anonymous identity card -->
       <div class="warm-card" style="text-align: center; margin-bottom: 2rem;">
         <span style="font-size: 4rem;">🪔</span>
-        <h2 class="serif-heading">anonymous soul</h2>
+        <h2 class="serif-heading" id="anonName">anonymous soul</h2>
         <p id="userIdDisplay" style="color:var(--warm-gold); font-size:0.85rem; margin: 0.5rem 0 1rem;"></p>
         <div style="display: flex; justify-content: center; gap: 2rem; margin: 1rem 0;">
           <div>
@@ -99,7 +99,9 @@
   }
 
   const userId = window.kathaaAuth.getUserId();
-  document.getElementById('userIdDisplay').innerText = `Your Kathaa ID · ${userId.slice(0,12)}...`;
+  const anonUsername = localStorage.getItem('kathaa_anonymous_username') || 'Brave Soul';
+  document.getElementById('anonName').innerText = anonUsername;
+  document.getElementById('userIdDisplay').innerText = `Known as · ${anonUsername}`;
 
   function updatePostsSection() {
     const userPosts = window.kathaaPosts.getUserPosts(userId);
