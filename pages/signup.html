@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kathaa — Create Account</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    .auth-shell {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .auth-tab {
+      background: transparent;
+      border: 1px solid var(--border-soft);
+      color: var(--muted-text);
+      border-radius: 999px;
+      padding: 0.65rem 1rem;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .auth-tab.active {
+      border-color: var(--amber-cta);
+      color: var(--amber-cta);
+      background: rgba(212, 129, 58, 0.08);
+    }
+
+    .auth-panel {
+      display: none;
+    }
+
+    .auth-panel.active {
+      display: block;
+    }
+
+    .auth-field {
+      margin-bottom: 1rem;
+    }
+
+    .auth-field label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .auth-input {
+      width: 100%;
+      background: rgba(14, 11, 8, 0.6);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 0.8rem;
+      color: var(--body-text);
+      font-family: inherit;
+    }
+
+    .auth-note {
+      color: var(--muted-text);
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .auth-message {
+      margin-top: 1rem;
+      text-align: center;
+      color: var(--amber-cta);
+      min-height: 1.5rem;
+    }
+
+    #phoneOtpGroup {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="katha-wrapper">
+    <header class="site-header">
+      <div class="logo-area">
+        <span class="diya-icon">🪔</span>
+        <span class="brand-name">Kathaa</span>
+        <span class="brand-sub">कथा</span>
+      </div>
+      <nav class="primary-nav">
+        <a href="../home.html" class="nav-link">Home</a>
+        <a href="feed.html" class="nav-link">Stories</a>
+        <a href="tracker.html" class="nav-link">Mood diary</a>
+        <a href="professionals.html" class="nav-link nav-link-support">Get support</a>
+        <a href="profile.html" class="nav-link">My space</a>
+        <a href="login.html" class="nav-link">Sign in</a>
+      </nav>
+    </header>
+
+    <main class="auth-shell">
+      <div class="warm-card">
+        <h2 class="serif-heading" style="text-align: center; margin-bottom: 0.4rem;">Create your account</h2>
+        <p class="auth-note" style="text-align: center; margin-bottom: 1.5rem;">Use email and password, or authenticate with your phone number to access your logged-in home page.</p>
+
+        <div class="auth-tabs">
+          <button type="button" class="auth-tab active" data-panel="emailPanel">Email sign up</button>
+          <button type="button" class="auth-tab" data-panel="phonePanel">Phone authentication</button>
+        </div>
+
+        <section id="emailPanel" class="auth-panel active">
+          <form id="emailSignupForm">
+            <div class="auth-field">
+              <label for="signupEmail">Email</label>
+              <input id="signupEmail" class="auth-input" type="email" autocomplete="email" required>
+            </div>
+            <div class="auth-field">
+              <label for="signupPhone">Phone number</label>
+              <input id="signupPhone" class="auth-input" type="tel" inputmode="tel" placeholder="+1 555 123 4567" required>
+            </div>
+            <div class="auth-field">
+              <label for="signupPassword">Password</label>
+              <input id="signupPassword" class="auth-input" type="password" autocomplete="new-password" minlength="6" required>
+            </div>
+            <div class="auth-field">
+              <label for="signupConfirmPassword">Confirm password</label>
+              <input id="signupConfirmPassword" class="auth-input" type="password" autocomplete="new-password" minlength="6" required>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%;">Create account</button>
+          </form>
+        </section>
+
+        <section id="phonePanel" class="auth-panel">
+          <div class="auth-note">Enter a phone number in international format. We will send a verification code and sign you in directly after confirmation.</div>
+          <form id="phoneAuthForm">
+            <div class="auth-field">
+              <label for="phoneNumber">Phone number</label>
+              <input id="phoneNumber" class="auth-input" type="tel" inputmode="tel" placeholder="+1 555 123 4567" required>
+            </div>
+            <div id="phoneOtpGroup" class="auth-field">
+              <label for="phoneOtp">Verification code</label>
+              <input id="phoneOtp" class="auth-input" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="123456">
+            </div>
+            <button type="submit" class="btn-primary" id="phoneSubmitBtn" style="width: 100%;">Send verification code</button>
+          </form>
+          <div id="recaptcha-container" style="margin-top: 1rem;"></div>
+        </section>
+
+        <div style="text-align: center; margin-top: 1rem;">
+          <a href="login.html" style="color: var(--warm-gold);">Already have an account? Sign in</a>
+        </div>
+        <div id="authMessage" class="auth-message"></div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>कथा — always anonymous, always safe.</p>
+    </footer>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      onAuthStateChanged,
+      RecaptchaVerifier,
+      signInWithPhoneNumber
+    } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBO2bzjwUo52rYAtAxqA04i3F_a_IDQejE",
+      authDomain: "kathaa-385a3.firebaseapp.com",
+      projectId: "kathaa-385a3",
+      storageBucket: "kathaa-385a3.firebasestorage.app",
+      messagingSenderId: "52566990780",
+      appId: "1:52566990780:web:e64147c95474885acbd5b9",
+      measurementId: "G-TFZG6F1VZR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const authMessage = document.getElementById('authMessage');
+    const tabs = document.querySelectorAll('.auth-tab');
+    const panels = document.querySelectorAll('.auth-panel');
+    const emailSignupForm = document.getElementById('emailSignupForm');
+    const phoneAuthForm = document.getElementById('phoneAuthForm');
+    const signupEmail = document.getElementById('signupEmail');
+    const signupPhone = document.getElementById('signupPhone');
+    const signupPassword = document.getElementById('signupPassword');
+    const signupConfirmPassword = document.getElementById('signupConfirmPassword');
+    const phoneNumber = document.getElementById('phoneNumber');
+    const phoneOtp = document.getElementById('phoneOtp');
+    const phoneOtpGroup = document.getElementById('phoneOtpGroup');
+    const phoneSubmitBtn = document.getElementById('phoneSubmitBtn');
+
+    let confirmationResult = null;
+    let recaptchaVerifier = null;
+
+    function showMessage(text, isError = true) {
+      authMessage.style.color = isError ? 'var(--amber-cta)' : 'var(--warm-gold)';
+      authMessage.textContent = text;
+    }
+
+    function activatePanel(panelId) {
+      tabs.forEach((tab) => {
+        tab.classList.toggle('active', tab.dataset.panel === panelId);
+      });
+
+      panels.forEach((panel) => {
+        panel.classList.toggle('active', panel.id === panelId);
+      });
+
+      showMessage('', false);
+    }
+
+    async function saveUserProfile(uid, data) {
+      await setDoc(doc(db, 'users', uid), {
+        ...data,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    }
+
+    function getEmailErrorMessage(code) {
+      switch (code) {
+        case 'auth/email-already-in-use':
+          return 'An account already exists with this email.';
+        case 'auth/invalid-email':
+          return 'Please enter a valid email address.';
+        case 'auth/weak-password':
+          return 'Password must be at least 6 characters.';
+        default:
+          return 'Could not create the account. Please try again.';
+      }
+    }
+
+    function getPhoneErrorMessage(code) {
+      switch (code) {
+        case 'auth/invalid-phone-number':
+          return 'Please enter a valid phone number in international format.';
+        case 'auth/missing-phone-number':
+          return 'Enter a phone number to continue.';
+        case 'auth/captcha-check-failed':
+          return 'App verification failed. Please try again.';
+        case 'auth/quota-exceeded':
+          return 'SMS quota exceeded. Please try again later.';
+        case 'auth/invalid-verification-code':
+          return 'The verification code is incorrect.';
+        case 'auth/code-expired':
+          return 'The verification code expired. Request a new code.';
+        default:
+          return 'Phone authentication failed. Please try again.';
+      }
+    }
+
+    function ensureRecaptcha() {
+      if (recaptchaVerifier) return recaptchaVerifier;
+
+      recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'normal'
+      });
+
+      return recaptchaVerifier;
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => activatePanel(tab.dataset.panel));
+    });
+
+    emailSignupForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const email = signupEmail.value.trim();
+      const phone = signupPhone.value.trim();
+      const password = signupPassword.value;
+      const confirmPassword = signupConfirmPassword.value;
+
+      if (!email || !phone || !password || !confirmPassword) {
+        showMessage('Complete all fields to create your account.');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showMessage('Passwords do not match.');
+        return;
+      }
+
+      try {
+        const credentials = await createUserWithEmailAndPassword(auth, email, password);
+
+        await saveUserProfile(credentials.user.uid, {
+          email,
+          phoneNumber: phone,
+          provider: 'password',
+          createdAt: serverTimestamp()
+        });
+
+        showMessage('Account created. Redirecting to your home page...', false);
+        setTimeout(() => {
+          window.location.href = '../index.html';
+        }, 1200);
+      } catch (error) {
+        showMessage(getEmailErrorMessage(error.code));
+      }
+    });
+
+    phoneAuthForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!confirmationResult) {
+        const rawPhoneNumber = phoneNumber.value.trim();
+
+        if (!rawPhoneNumber) {
+          showMessage('Enter a phone number to continue.');
+          return;
+        }
+
+        try {
+          phoneSubmitBtn.disabled = true;
+          const verifier = ensureRecaptcha();
+          confirmationResult = await signInWithPhoneNumber(auth, rawPhoneNumber, verifier);
+          phoneOtpGroup.style.display = 'block';
+          phoneOtp.required = true;
+          phoneSubmitBtn.textContent = 'Verify code and continue';
+          showMessage('Verification code sent. Enter it below to finish signing in.', false);
+        } catch (error) {
+          showMessage(getPhoneErrorMessage(error.code));
+          if (recaptchaVerifier) {
+            recaptchaVerifier.clear();
+            recaptchaVerifier = null;
+            document.getElementById('recaptcha-container').innerHTML = '';
+          }
+        } finally {
+          phoneSubmitBtn.disabled = false;
+        }
+
+        return;
+      }
+
+      const verificationCode = phoneOtp.value.trim();
+
+      if (!verificationCode) {
+        showMessage('Enter the verification code that was sent to your phone.');
+        return;
+      }
+
+      try {
+        phoneSubmitBtn.disabled = true;
+        const result = await confirmationResult.confirm(verificationCode);
+        await saveUserProfile(result.user.uid, {
+          phoneNumber: result.user.phoneNumber || phoneNumber.value.trim(),
+          provider: 'phone',
+          createdAt: serverTimestamp()
+        });
+
+        showMessage('Phone number verified. Redirecting...', false);
+        setTimeout(() => {
+          window.location.href = '../index.html';
+        }, 1200);
+      } catch (error) {
+        showMessage(getPhoneErrorMessage(error.code));
+      } finally {
+        phoneSubmitBtn.disabled = false;
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.replace('../index.html');
+      }
+    });
+  </script>
+  <script src="../js/didi.js"></script>
+</body>
+</html>

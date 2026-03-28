@@ -98,8 +98,16 @@ a {
   transition: color 0.2s;
 }
 
+.primary-nav .nav-link.nav-link-support {
+  color: var(--amber-cta) !important;
+}
+
 .nav-link:hover {
   color: var(--warm-gold);
+}
+
+.primary-nav .nav-link.nav-link-support:hover {
+  color: var(--amber-hover) !important;
 }
 
 /* buttons */
@@ -164,7 +172,7 @@ a {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 8rem;
   max-width: 1300px;
   margin: 0 auto;
 }
@@ -182,7 +190,7 @@ a {
 
 .hero-tagline {
   font-size: 1rem;
-  max-width: 550px;
+  max-width: 800px;
   color: var(--muted-text);
   margin-bottom: 2rem;
   line-height: 1.6;
