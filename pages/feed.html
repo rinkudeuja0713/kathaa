@@ -49,17 +49,17 @@
     }
   </style>
 </head>
-<body>
+<body data-enable-didi="true">
   <div class="katha-wrapper">
     <header class="site-header">
-      <div class="logo-area"><span class="brand-name">Kathaa</span><span class="brand-sub">कथा</span></div>
+      <div class="logo-area"><span class="diya-icon">🪔</span><span class="brand-name">Kathaa</span><span class="brand-sub">कथा</span></div>
       <nav class="primary-nav">
         <a href="../index.html" class="nav-link">Home</a>
-        <a href="feed.html" class="nav-link">Stories</a>
-        <a href="tracker.html" class="nav-link">Mood diary</a>
+        <a href="feed.html" class="nav-link active">Stories</a>
+        <a href="tracker.html" class="nav-link">Safe spaces</a>
         <a href="professionals.html" class="nav-link nav-link-support">Get support</a>
         <a href="profile.html" class="nav-link">My space</a>
-        <a href="login.html" class="nav-link">Login</a>
+        <a href="../home.html" class="nav-link" id="navLogout" style="opacity: 0; pointer-events: none;">Logout</a>
       </nav>
     </header>
     <main style="padding: 1.5rem 2rem;">
@@ -96,6 +96,39 @@
     <footer class="site-footer"><p>a safe harbor for the heart — कथा · every story matters</p></footer>
   </div>
 
+  <script type="module">
+    import { getApps, initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBO2bzjwUo52rYAtAxqA04i3F_a_IDQejE",
+      authDomain: "kathaa-385a3.firebaseapp.com",
+      projectId: "kathaa-385a3",
+      storageBucket: "kathaa-385a3.firebasestorage.app",
+      messagingSenderId: "52566990780",
+      appId: "1:52566990780:web:e64147c95474885acbd5b9",
+      measurementId: "G-TFZG6F1VZR"
+    };
+
+    const authApp = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const auth = getAuth(authApp);
+    const navLogout = document.getElementById('navLogout');
+
+    navLogout.addEventListener('click', async (event) => {
+      event.preventDefault();
+
+      try {
+        navLogout.style.pointerEvents = 'none';
+        await signOut(auth);
+        localStorage.setItem('kathaa.auth.hint', 'logged_out');
+      } finally {
+        window.location.replace('../home.html');
+      }
+    });
+
+    navLogout.style.opacity = '1';
+    navLogout.style.pointerEvents = 'auto';
+  </script>
   <script src="../js/auth.js"></script>
   <script src="../js/posts.js"></script>
   <script type="module">

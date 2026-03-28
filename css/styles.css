@@ -13,6 +13,7 @@
   --bg-card: #181410;
   --warm-gold: #c8a96e;
   --amber-cta: #d4813a;
+  --amber-bright: #ff9f43;
   --amber-hover: #c06828;
   --cream-heading: #f0e8d8;
   --muted-text: #7a6e60;
@@ -95,15 +96,27 @@ a {
   font-weight: 400;
   letter-spacing: 0.04em;
   color: var(--muted-text);
-  transition: color 0.2s;
+  transition: color 0.2s, border-color 0.2s;
+  padding-bottom: 0.2rem;
+  border-bottom: 2px solid transparent;
 }
 
 .primary-nav .nav-link.nav-link-support {
   color: var(--amber-cta) !important;
 }
 
+.primary-nav .nav-link.nav-link-support.active {
+  color: var(--amber-bright) !important;
+  border-bottom-color: var(--amber-bright);
+}
+
 .nav-link:hover {
   color: var(--warm-gold);
+}
+
+.nav-link.active {
+  color: var(--cream-heading);
+  border-bottom-color: currentColor;
 }
 
 .primary-nav .nav-link.nav-link-support:hover {

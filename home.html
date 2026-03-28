@@ -8,6 +8,67 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .auth-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 3, 2, 0.72);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1100;
+      padding: 1.5rem;
+    }
+
+    .auth-modal-backdrop.open {
+      display: flex;
+    }
+
+    .auth-modal {
+      width: min(100%, 420px);
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .auth-modal-close {
+      position: absolute;
+      top: 0.85rem;
+      right: 0.85rem;
+      border: none;
+      background: transparent;
+      color: var(--muted-text);
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .auth-modal-title {
+      margin-bottom: 0.6rem;
+      padding-right: 2rem;
+    }
+
+    .auth-modal-copy {
+      color: var(--muted-text);
+      margin-bottom: 1.3rem;
+      line-height: 1.6;
+    }
+
+    .auth-modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.85rem;
+    }
+
+    .auth-modal-note {
+      font-size: 0.82rem;
+      color: var(--muted-text);
+    }
+  </style>
 </head>
 <body>
   <div class="katha-wrapper">
@@ -18,10 +79,9 @@
         <span class="brand-sub">कथा</span>
       </div>
       <nav class="primary-nav">
-        <a href="home.html" class="nav-link">Home</a>
-        <a href="pages/feed.html" class="nav-link">Stories</a>
+        <a href="home.html" class="nav-link active">Home</a>
+        <a href="pages/feed.html" class="nav-link" id="storiesNavLink">Stories</a>
         <a href="pages/professionals.html" class="nav-link nav-link-support">Get support</a>
-        <a href="pages/profile.html" class="nav-link" id="navProfile">My space</a>
         <a href="pages/login.html" class="nav-link" id="navLogin">Login</a>
       </nav>
     </header>
@@ -32,8 +92,8 @@
           <h1 class="hero-title">Your story,<br>Held in silence no more.</h1>
           <p class="hero-tagline">There are moments we carry quietly, without a place to share them. Kathaa is a safe, anonymous space — where your story can be expressed, heard, and held with care.</p>
           <div class="hero-actions">
-            <a href="pages/feed.html" class="btn-primary">✨ share anonymously</a>
-            <a href="pages/tracker.html" class="btn-outline">🌱 join a safe space</a>
+            <a href="pages/feed.html" class="btn-primary" id="shareAnonymouslyBtn">✨ share anonymously</a>
+            <a href="pages/tracker.html" class="btn-outline" id="joinSafeSpaceBtn">🌱 join a safe space</a>
             <a href="pages/professionals.html" class="btn-outline" style="margin-left:0.5rem;">🤍 get professional support</a>
           </div>
           <div class="validation-glow-strip">
@@ -51,6 +111,18 @@
     <footer class="site-footer" style="margin-top: 0.25rem;">
       <p>a safe harbor for the heart — कथा · every story matters</p>
     </footer>
+    <div class="auth-modal-backdrop" id="authModalBackdrop" aria-hidden="true">
+      <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+        <button class="auth-modal-close" id="authModalClose" aria-label="Close">✕</button>
+        <h2 class="serif-heading auth-modal-title" id="authModalTitle">Sign in to share anonymously</h2>
+        <p class="auth-modal-copy" id="authModalCopy">To protect this space, posting is available only after sign-in. You can log in or create an account, and we’ll take you straight to the stories page.</p>
+        <div class="auth-modal-actions">
+          <a href="pages/login.html?next=feed" class="btn-primary" id="authModalLoginLink">Sign in</a>
+          <a href="pages/signup.html?next=feed" class="btn-outline" id="authModalSignupLink">Create account</a>
+        </div>
+        <p class="auth-modal-note">You can still browse support resources without signing in.</p>
+      </div>
+    </div>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
       import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
@@ -67,6 +139,63 @@
 
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
+      const shareAnonymouslyBtn = document.getElementById('shareAnonymouslyBtn');
+      const joinSafeSpaceBtn = document.getElementById('joinSafeSpaceBtn');
+      const storiesNavLink = document.getElementById('storiesNavLink');
+      const authModalBackdrop = document.getElementById('authModalBackdrop');
+      const authModalClose = document.getElementById('authModalClose');
+      const authModalTitle = document.getElementById('authModalTitle');
+      const authModalCopy = document.getElementById('authModalCopy');
+      const authModalLoginLink = document.getElementById('authModalLoginLink');
+      const authModalSignupLink = document.getElementById('authModalSignupLink');
+
+      function openAuthModal(nextTarget) {
+        const nextParam = nextTarget === 'tracker' ? 'tracker' : 'feed';
+        authModalTitle.textContent = nextTarget === 'tracker'
+          ? 'Sign in to join a safe space'
+          : nextTarget === 'stories'
+            ? 'Sign in to see stories'
+            : 'Sign in to share anonymously';
+        const destinationLabel = nextTarget === 'tracker' ? 'your safe space' : 'the stories page';
+        authModalCopy.textContent = `To protect this space, this feature is available only after sign-in. You can log in or create an account, and we’ll take you straight to ${destinationLabel}.`;
+        authModalLoginLink.href = `pages/login.html?next=${nextParam}`;
+        authModalSignupLink.href = `pages/signup.html?next=${nextParam}`;
+        authModalBackdrop.classList.add('open');
+        authModalBackdrop.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeAuthModal() {
+        authModalBackdrop.classList.remove('open');
+        authModalBackdrop.setAttribute('aria-hidden', 'true');
+      }
+
+      shareAnonymouslyBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        openAuthModal('feed');
+      });
+
+      storiesNavLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        openAuthModal('stories');
+      });
+
+      joinSafeSpaceBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        openAuthModal('tracker');
+      });
+
+      authModalClose.addEventListener('click', closeAuthModal);
+      authModalBackdrop.addEventListener('click', (event) => {
+        if (event.target === authModalBackdrop) {
+          closeAuthModal();
+        }
+      });
+
+      window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && authModalBackdrop.classList.contains('open')) {
+          closeAuthModal();
+        }
+      });
 
       onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -75,6 +204,5 @@
       });
     </script>
   </div>
-  <script src="js/didi.js"></script>
 </body>
 </html>

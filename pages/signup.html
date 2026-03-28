@@ -97,10 +97,8 @@
       <nav class="primary-nav">
         <a href="../home.html" class="nav-link">Home</a>
         <a href="feed.html" class="nav-link">Stories</a>
-        <a href="tracker.html" class="nav-link">Mood diary</a>
         <a href="professionals.html" class="nav-link nav-link-support">Get support</a>
-        <a href="profile.html" class="nav-link">My space</a>
-        <a href="login.html" class="nav-link">Sign in</a>
+        <a href="login.html" class="nav-link active">Login</a>
       </nav>
     </header>
 
@@ -207,6 +205,12 @@
     const phoneOtp = document.getElementById('phoneOtp');
     const phoneOtpGroup = document.getElementById('phoneOtpGroup');
     const phoneSubmitBtn = document.getElementById('phoneSubmitBtn');
+    const nextParam = new URLSearchParams(window.location.search).get('next');
+    const nextDestination = nextParam === 'feed'
+      ? 'feed.html'
+      : nextParam === 'tracker'
+        ? 'tracker.html'
+        : '../index.html';
 
     let confirmationResult = null;
     let recaptchaVerifier = null;
@@ -309,9 +313,10 @@
           createdAt: serverTimestamp()
         });
 
+        localStorage.setItem('kathaa.auth.hint', 'logged_in');
         showMessage('Account created. Redirecting to your home page...', false);
         setTimeout(() => {
-          window.location.href = '../index.html';
+          window.location.href = nextDestination;
         }, 1200);
       } catch (error) {
         showMessage(getEmailErrorMessage(error.code));
@@ -367,9 +372,10 @@
           createdAt: serverTimestamp()
         });
 
+        localStorage.setItem('kathaa.auth.hint', 'logged_in');
         showMessage('Phone number verified. Redirecting...', false);
         setTimeout(() => {
-          window.location.href = '../index.html';
+          window.location.href = nextDestination;
         }, 1200);
       } catch (error) {
         showMessage(getPhoneErrorMessage(error.code));
@@ -384,6 +390,5 @@
       }
     });
   </script>
-  <script src="../js/didi.js"></script>
 </body>
 </html>

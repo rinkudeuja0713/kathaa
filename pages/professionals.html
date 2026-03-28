@@ -243,6 +243,66 @@
 
     .note-inner strong { color: var(--body-text); }
 
+    .auth-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 3, 2, 0.72);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1100;
+      padding: 1.5rem;
+    }
+
+    .auth-modal-backdrop.open {
+      display: flex;
+    }
+
+    .auth-modal {
+      width: min(100%, 420px);
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .auth-modal-close {
+      position: absolute;
+      top: 0.85rem;
+      right: 0.85rem;
+      border: none;
+      background: transparent;
+      color: var(--muted-text);
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .auth-modal-title {
+      margin-bottom: 0.6rem;
+      padding-right: 2rem;
+    }
+
+    .auth-modal-copy {
+      color: var(--muted-text);
+      margin-bottom: 1.3rem;
+      line-height: 1.6;
+    }
+
+    .auth-modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.85rem;
+    }
+
+    .auth-modal-note {
+      font-size: 0.82rem;
+      color: var(--muted-text);
+    }
+
     @media (max-width: 600px) {
       .support-hero h1 { font-size: 1.8rem; }
       .support-grid { grid-template-columns: 1fr; }
@@ -258,12 +318,13 @@
       <span class="brand-name">Kathaa</span>
       <span class="brand-sub">कथा</span>
     </div>
-    <nav class="primary-nav">
-      <a href="../index.html" class="nav-link">Home</a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="../home.html" class="nav-link" id="navHome">Home</a>
       <a href="feed.html" class="nav-link">Stories</a>
-      <a href="tracker.html" class="nav-link">Mood diary</a>
+      <a href="tracker.html" class="nav-link" id="navSafeSpaces" style="display: none;">Safe spaces</a>
       <a href="professionals.html" class="nav-link nav-link-support active">Get support</a>
-      <a href="profile.html" class="nav-link">My space</a>
+      <a href="profile.html" class="nav-link" id="navMySpace" style="display: none;">My space</a>
+      <a href="login.html" class="nav-link" id="navAuth" data-mode="login" style="opacity: 0; pointer-events: none;">Login</a>
     </nav>
   </header>
 
@@ -476,6 +537,136 @@
 
   </main>
 
-  <script src="../js/didi.js"></script>
+  <div class="auth-modal-backdrop" id="authModalBackdrop" aria-hidden="true">
+    <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+      <button class="auth-modal-close" id="authModalClose" aria-label="Close">✕</button>
+      <h2 class="serif-heading auth-modal-title" id="authModalTitle">Sign in to see stories</h2>
+      <p class="auth-modal-copy">To protect this space, stories are available only after sign-in. You can log in or create an account, and we’ll take you straight to the stories page.</p>
+      <div class="auth-modal-actions">
+        <a href="login.html?next=feed" class="btn-primary">Sign in</a>
+        <a href="signup.html?next=feed" class="btn-outline">Create account</a>
+      </div>
+      <p class="auth-modal-note">Support resources remain available without signing in.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBO2bzjwUo52rYAtAxqA04i3F_a_IDQejE",
+      authDomain: "kathaa-385a3.firebaseapp.com",
+      projectId: "kathaa-385a3",
+      storageBucket: "kathaa-385a3.firebasestorage.app",
+      messagingSenderId: "52566990780",
+      appId: "1:52566990780:web:e64147c95474885acbd5b9",
+      measurementId: "G-TFZG6F1VZR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const AUTH_HINT_KEY = 'kathaa.auth.hint';
+    const navHome = document.getElementById('navHome');
+    const navAuth = document.getElementById('navAuth');
+    const storiesNavLink = document.querySelector('a[href="feed.html"]');
+    const navSafeSpaces = document.getElementById('navSafeSpaces');
+    const navMySpace = document.getElementById('navMySpace');
+    const authModalBackdrop = document.getElementById('authModalBackdrop');
+    const authModalClose = document.getElementById('authModalClose');
+    let isLoggedIn = false;
+
+    function ensureDidiLoaded() {
+      document.body.dataset.enableDidi = 'true';
+
+      if (!document.getElementById('didiScript')) {
+        const script = document.createElement('script');
+        script.src = '../js/didi.js';
+        script.id = 'didiScript';
+        document.body.appendChild(script);
+      }
+    }
+
+    function applyAuthUI(loggedIn) {
+      isLoggedIn = loggedIn;
+
+      if (loggedIn) {
+        navHome.href = '../index.html';
+        navAuth.textContent = 'Logout';
+        navAuth.href = '../home.html';
+        navAuth.dataset.mode = 'logout';
+        navAuth.style.display = '';
+        navSafeSpaces.style.display = '';
+        navMySpace.style.display = '';
+        ensureDidiLoaded();
+      } else {
+        navHome.href = '../home.html';
+        navAuth.textContent = 'Login';
+        navAuth.href = 'login.html';
+        navAuth.dataset.mode = 'login';
+        navAuth.style.display = '';
+        navSafeSpaces.style.display = 'none';
+        navMySpace.style.display = 'none';
+        delete document.body.dataset.enableDidi;
+      }
+
+      navAuth.style.opacity = '1';
+      navAuth.style.pointerEvents = 'auto';
+    }
+
+    applyAuthUI(localStorage.getItem(AUTH_HINT_KEY) === 'logged_in');
+
+    function openAuthModal() {
+      authModalBackdrop.classList.add('open');
+      authModalBackdrop.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeAuthModal() {
+      authModalBackdrop.classList.remove('open');
+      authModalBackdrop.setAttribute('aria-hidden', 'true');
+    }
+
+    navAuth.addEventListener('click', async (event) => {
+      if (navAuth.dataset.mode !== 'logout') {
+        return;
+      }
+
+      event.preventDefault();
+
+      try {
+        await signOut(auth);
+        localStorage.setItem(AUTH_HINT_KEY, 'logged_out');
+      } finally {
+        window.location.href = '../home.html';
+      }
+    });
+
+    storiesNavLink.addEventListener('click', (event) => {
+      if (isLoggedIn) {
+        return;
+      }
+
+      event.preventDefault();
+      openAuthModal();
+    });
+
+    authModalClose.addEventListener('click', closeAuthModal);
+    authModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === authModalBackdrop) {
+        closeAuthModal();
+      }
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && authModalBackdrop.classList.contains('open')) {
+        closeAuthModal();
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      localStorage.setItem(AUTH_HINT_KEY, user ? 'logged_in' : 'logged_out');
+      applyAuthUI(!!user);
+    });
+  </script>
 </body>
 </html>

@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
-<body>
+<body data-enable-didi="true">
   <div class="katha-wrapper">
     <header class="site-header">
       <div class="logo-area">
@@ -18,11 +18,12 @@
         <span class="brand-sub">कथा</span>
       </div>
       <nav class="primary-nav">
-        <a href="index.html" class="nav-link">Home</a>
+        <a href="index.html" class="nav-link active">Home</a>
         <a href="pages/feed.html" class="nav-link">Stories</a>
+        <a href="pages/tracker.html" class="nav-link">Safe spaces</a>
         <a href="pages/professionals.html" class="nav-link nav-link-support">Get support</a>
-        <a href="pages/profile.html" class="nav-link" id="navProfile">My space</a>
-        <a href="home.html" class="nav-link" id="navLogout">Logout</a>
+        <a href="pages/profile.html" class="nav-link">My space</a>
+        <a href="home.html" class="nav-link" id="navLogout" style="opacity: 0; pointer-events: none;">Logout</a>
       </nav>
     </header>
 
@@ -44,21 +45,13 @@
           <span class="floating-diya">🪔</span>
         </div>
       </div>
-      <section class="home-feed-preview" style="margin:2.5rem 0 1.5rem 0;">
-        <h2 class="serif-heading" style="font-size:1.3rem;margin-bottom:0.7rem;">Recent Stories</h2>
-        <div id="feed" class="feed-grid" style="gap:1rem;"></div>
-        <div style="margin-top:0.7rem;text-align:right;">
-          <a href="pages/feed.html" class="btn-outline">See all stories →</a>
-        </div>
-      </section>
-      <div class="landing-quote">
+      <div class="landing-quote" style="border-top: none; padding-top: 0; margin-top: 5rem;">
         <p>“Here in Kathaa, what you feel is valid — and you don’t have to carry it alone.”</p>
       </div>
     </main>
-    <footer class="site-footer">
+    <footer class="site-footer" style="margin-top: 0.25rem;">
       <p>a safe harbor for the heart — कथा · every story matters</p>
     </footer>
-  <script type="module" src="js/feed.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
@@ -77,17 +70,19 @@
     const auth = getAuth(app);
     const navLogout = document.getElementById('navLogout');
 
-    if (navLogout) {
-      navLogout.addEventListener('click', async (event) => {
-        event.preventDefault();
+    navLogout.addEventListener('click', async (event) => {
+      event.preventDefault();
 
-        try {
-          await signOut(auth);
-        } finally {
-          window.location.href = 'home.html';
-        }
-      });
-    }
+      try {
+        await signOut(auth);
+        localStorage.setItem('kathaa.auth.hint', 'logged_out');
+      } finally {
+        window.location.href = 'home.html';
+      }
+    });
+
+    navLogout.style.opacity = '1';
+    navLogout.style.pointerEvents = 'auto';
 
     onAuthStateChanged(auth, (user) => {
       if (!user) {

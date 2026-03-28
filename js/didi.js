@@ -1,6 +1,10 @@
 (function () {
   'use strict';
 
+  if (!document.body || document.body.dataset.enableDidi !== 'true') {
+    return;
+  }
+
   const API_URL = 'http://localhost:5000/api/didi/chat';
 
   // ─── CSS ────────────────────────────────────────────────────────────────────
