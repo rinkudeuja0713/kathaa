@@ -1,15 +1,23 @@
 import os
 import random
-import openai
+import google.generativeai as genai
 from flask import Blueprint, request, jsonify
 from dotenv import load_dotenv
 
 load_dotenv()
-openai.api_key = os.getenv('OPENAI_API_KEY')
+
+# Configure Gemini
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+    # Use a lightweight model (gemini-1.5-flash is fast and cheap)
+    model = genai.GenerativeModel('gemini-1.5-flash')
+else:
+    model = None
 
 ai_bp = Blueprint('ai', __name__)
 
-# List of fallback suggestions (rotates randomly)
+# Fallback suggestions (rotates randomly)
 FALLBACKS = [
     "Breathe deeply. You are not alone in this feeling.",
     "It's okay to feel this way. Take one small step today.",
@@ -28,22 +36,18 @@ def get_suggestion():
     if not user_text:
         return jsonify({'suggestion': 'Share what’s on your mind for a gentle suggestion.'})
 
-    # If no API key, return a random fallback
-    if not openai.api_key:
+    # If no Gemini key or model, use fallback
+    if not model:
         return jsonify({'suggestion': random.choice(FALLBACKS)})
 
     try:
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=f"Give a short, compassionate, supportive suggestion (max 30 words) for someone who said: {user_text}",
-            max_tokens=60,
-            temperature=0.8  # higher temperature = more variety
-        )
-        suggestion = response.choices[0].text.strip()
+        prompt = f"Give a short, compassionate, supportive suggestion (max 30 words) for someone who said: {user_text}"
+        response = model.generate_content(prompt)
+        suggestion = response.text.strip()
         if not suggestion:
             suggestion = random.choice(FALLBACKS)
     except Exception as e:
-        print("OpenAI error:", e)
+        print("Gemini error:", e)
         suggestion = random.choice(FALLBACKS)
 
     return jsonify({'suggestion': suggestion})

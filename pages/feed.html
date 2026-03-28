@@ -7,6 +7,52 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    /* Premium toast styling */
+    .katha-toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      max-width: 320px;
+      background: var(--bg-card);
+      border-left: 4px solid var(--amber-cta);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3), 0 0 0 1px rgba(200,169,110,0.2);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      animation: toastSlideIn 0.3s ease-out forwards;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--body-text);
+    }
+    .katha-toast .toast-emoji {
+      font-size: 1.4rem;
+      margin-right: 0.5rem;
+      filter: drop-shadow(0 0 4px var(--amber-cta));
+    }
+    .katha-toast .toast-message {
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+    @keyframes toastSlideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes toastFadeOut {
+      to { opacity: 0; transform: translateX(20px); }
+    }
+    .katha-toast.fade-out {
+      animation: toastFadeOut 0.3s ease-in forwards;
+    }
+    @media (max-width: 600px) {
+      .katha-toast {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        max-width: none;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="katha-wrapper">
@@ -54,8 +100,8 @@
     <footer class="site-footer"><p>a safe harbor for the heart — कथा · every story matters</p></footer>
   </div>
 
-  <!-- auth.js must be loaded first (defines window.kathaaAuth) -->
   <script src="../js/auth.js"></script>
+  <script src="../js/posts.js"></script>
   <script type="module">
     import { getPosts, createPost, getAISuggestion } from '../js/api.js';
 
@@ -93,8 +139,7 @@
         container.innerHTML = '<div class="warm-card" style="text-align:center;">✨ No stories yet. Be the first to share.</div>';
         return;
       }
-
-      const allPosts = await getPosts(); // for similarity calculation
+      const allPosts = await getPosts();
       container.innerHTML = posts.map(post => {
         const similarCount = allPosts.filter(p => {
           if (p.id === post.id) return false;
@@ -103,15 +148,14 @@
           if (timestamp < oneWeekAgo) return false;
           return p.tags.some(tag => post.tags.includes(tag));
         }).length;
-
         return `
           <div class="warm-card">
-            <div style="display:flex; gap: 1rem; align-items:center; margin-bottom: 0.6rem;">
+            <div style="display:flex; gap:1rem; align-items:center; margin-bottom:0.6rem;">
               <span style="font-size:1.8rem;">${post.moodEmoji || '🪔'}</span>
               <span style="font-size:0.7rem; color:var(--muted-text);">${new Date(post.timestamp).toLocaleString()}</span>
             </div>
-            <p style="margin-bottom: 0.8rem;">${escapeHtml(post.text)}</p>
-            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom: 0.4rem;">
+            <p style="margin-bottom:0.8rem;">${escapeHtml(post.text)}</p>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.4rem;">
               ${post.tags.map(t => `<span style="background:rgba(200,169,110,0.1); padding:0.2rem 0.7rem; border-radius:20px; font-size:0.7rem;">#${t}</span>`).join('')}
             </div>
             <div class="post-count" style="font-size:0.8rem; color:var(--warm-gold);">❤️ ${similarCount} people feel this way this week</div>
@@ -145,18 +189,64 @@
       `).join('');
     }
 
+    const WAITING_MESSAGES = [
+      "🕯️ Holding your kathaa safely...",
+      "🕯️ Lighting a diya for your courage...",
+      "🕯️ Your story is resting in gentle hands..."
+    ];
+
+    const FALLBACK_VALIDATIONS = [
+      "You are heard. Thank you for sharing your heart with us.",
+      "Even heavy feelings pass — breathe, you are safe here.",
+      "Many hearts echo yours tonight. You’re never alone."
+    ];
+
+    function randomFrom(list) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    // Toast helper
+    function showToast(message, emoji = "🕯️", duration = 5000) {
+      // Remove existing toast
+      const existing = document.querySelector('.katha-toast');
+      if (existing) existing.remove();
+
+      if (!message || message.trim() === '') message = "You are heard. You are not alone.";
+
+      const toast = document.createElement('div');
+      toast.className = 'katha-toast';
+      toast.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span class="toast-emoji">${emoji}</span>
+          <div class="toast-message">${escapeHtml(message)}</div>
+        </div>
+      `;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('fade-out');
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+
+    async function fetchAISuggestionText(text) {
+      try {
+        const response = await getAISuggestion(text);
+        const suggestion = response && response.suggestion ? response.suggestion.trim() : '';
+        return suggestion || null;
+      } catch (err) {
+        console.warn('AI suggestion failed:', err);
+        return null;
+      }
+    }
+
+    // Post button
     const postBtn = document.getElementById('publishPostBtn');
     if (postBtn) {
       postBtn.onclick = async () => {
         const text = document.getElementById('postTextarea').value.trim();
-        if (!text) {
-          alert('Please share something from your heart.');
-          return;
-        }
-        if (selectedTags.length === 0) {
-          alert('Choose a mood tag so your story finds similar souls.');
-          return;
-        }
+        if (!text) { alert('Please share something from your heart.'); return; }
+        if (selectedTags.length === 0) { alert('Choose a mood tag so your story finds similar souls.'); return; }
 
         try {
           if (!window.kathaaAuth || typeof window.kathaaAuth.getUserId !== 'function') {
@@ -165,6 +255,10 @@
           }
           const userId = window.kathaaAuth.getUserId();
 
+          // Immediate feedback so users see a toast even while we save
+          showToast(randomFrom(WAITING_MESSAGES), '🕯️', 5000);
+
+          // Save post to backend
           const postData = {
             text,
             tags: selectedTags,
@@ -172,36 +266,42 @@
             authorId: userId,
             timestamp: new Date().toISOString()
           };
-
           await createPost(postData);
 
+          if (window.kathaaPosts && typeof window.kathaaPosts.addNewPost === 'function') {
+            window.kathaaPosts.addNewPost(text, selectedTags, userId);
+          }
+
+          // Clear form and refresh feed
           document.getElementById('postTextarea').value = '';
           selectedTags = [];
           updateTagSelection();
           await renderFeed();
 
-          // Show AI suggestion if available
-          try {
-            const ai = await getAISuggestion(text);
-            const valDiv = document.getElementById('validationArea');
-            valDiv.innerHTML = `
-              <div class="glow-validate">
-                ✨ Your story has been heard. You are not alone.<br>
-                🕯️ <em>${ai.suggestion}</em>
-              </div>
-            `;
-            setTimeout(() => { valDiv.innerHTML = ''; }, 5000);
-          } catch (aiErr) {
-            const valDiv = document.getElementById('validationArea');
-            valDiv.innerHTML = `
-              <div class="glow-validate">
-                ✨ Your story has been heard. You are not alone.
-              </div>
-            `;
-            setTimeout(() => { valDiv.innerHTML = ''; }, 5000);
+          // Update toast with a placeholder while waiting for AI
+          showToast('✨ Your story is shared. Gathering a gentle thought...', '⏳', 5000);
+
+          // Try to get AI suggestion via backend
+          let suggestion = await fetchAISuggestionText(text);
+          if (!suggestion) {
+            suggestion = randomFrom(FALLBACK_VALIDATIONS);
           }
+
+          // Update the toast with the final message
+          showToast(suggestion, "✨", 5000);
+
+          // Also show validation area inside the card
+          const valDiv = document.getElementById('validationArea');
+          valDiv.innerHTML = `
+            <div class="glow-validate">
+              ✨ Your story has been heard. You are not alone.<br>
+              🕯️ <em>${escapeHtml(suggestion)}</em>
+            </div>
+          `;
+          setTimeout(() => { valDiv.innerHTML = ''; }, 5000);
         } catch (err) {
           console.error('Error posting story:', err);
+          showToast('⚠️ Could not save your kathaa. Please ensure the support service is running.', '⚠️', 5000);
           alert('Could not post. Make sure the backend is running at http://localhost:5000');
         }
       };
@@ -209,7 +309,7 @@
       console.error('Post button not found!');
     }
 
-    // Tag selection
+    // Tag selection listeners
     document.querySelectorAll('#tagSelector .mood-tag').forEach(btn => {
       btn.addEventListener('click', () => {
         const tagVal = btn.dataset.tag;
@@ -233,7 +333,7 @@
       });
     });
 
-    // Initial load
+    // Initial render
     renderFeed();
     renderSupportSuggestions();
   </script>
