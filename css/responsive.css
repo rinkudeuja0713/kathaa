@@ -17,11 +17,29 @@
   .validation-glow-strip {
     justify-content: center;
   }
+  .landing-motif-bar {
+    text-align: center;
+  }
+  .hero-tagline-nepali {
+    text-align: center;
+  }
+  .validation-glow-strip.bilingual-strip {
+    align-items: center;
+    text-align: center;
+  }
   .support-grid {
     flex-direction: column;
   }
-  .filter-bar {
+  .filter-bar,
+  .feed-filter-bar {
     overflow-x: auto;
     padding-bottom: 0.5rem;
+  }
+  .feed-page {
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+  }
+  .feed-inner {
+    max-width: 100%;
   }
 }

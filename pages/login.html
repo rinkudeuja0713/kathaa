@@ -247,22 +247,6 @@
   </style>
 </head>
 <body>
-  <div class="katha-wrapper">
-    <header class="site-header">
-      <div class="logo-area">
-        <span class="diya-icon">🪔</span>
-        <span class="brand-name">Kathaa</span>
-        <span class="brand-sub">कथा</span>
-      </div>
-      <nav class="primary-nav">
-        <a href="../home.html" class="nav-link">Home</a>
-        <a href="feed.html" class="nav-link">Stories</a>
-        <a href="groups.html" class="nav-link">Groups</a>
-        <a href="professionals.html" class="nav-link nav-link-support">Get support</a>
-        <a href="profile.html" class="nav-link">My space</a>
-        <a href="login.html" class="nav-link">Login</a>
-      </nav>
-    </header>
   <div class="login-container">
     <!-- Left Section: Branding -->
     <div class="login-left">
@@ -306,53 +290,14 @@
       <div class="signup-link">
         Don't have an account? <a href="signup.html">Create one</a>
       </div>
-    </div>
-  </div>
+      <script type="module">
+    import { handleLogin } from '../js/auth.js';
 
-  <script type="module">
-    // Import Firebase SDKs
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBO2bzjwUo52rYAtAxqA04i3F_a_IDQejE",
-      authDomain: "kathaa-385a3.firebaseapp.com",
-      projectId: "kathaa-385a3",
-      storageBucket: "kathaa-385a3.firebasestorage.app",
-      messagingSenderId: "52566990780",
-      appId: "1:52566990780:web:e64147c95474885acbd5b9",
-      measurementId: "G-TFZG6F1VZR"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const googleProvider = new GoogleAuthProvider();
-
-    // Anonymous username generator (Reddit-style)
-    const anonymousAdjectives = ['Silent', 'Calm', 'Gentle', 'Brave', 'Wise', 'True', 'Pure', 'Free', 'Bright', 'Warm', 'Deep', 'Clear', 'Still', 'Swift', 'Strong', 'Humble', 'Noble', 'Kind'];
-    const anonymousNouns = ['Diya', 'Flame', 'Echo', 'River', 'Mountain', 'Stone', 'Wind', 'Star', 'Moon', 'Sun', 'Tree', 'Soul', 'Heart', 'Light', 'Path', 'Voice', 'Seed', 'Breath'];
-
-    function generateAnonymousUsername() {
-      const adjective = anonymousAdjectives[Math.floor(Math.random() * anonymousAdjectives.length)];
-      const noun = anonymousNouns[Math.floor(Math.random() * anonymousNouns.length)];
-      const number = Math.floor(Math.random() * 1000);
-      return `${adjective}${noun}${number}`;
-    }
-
-    function saveAnonymousUsername(username) {
-      localStorage.setItem('kathaa_anonymous_username', username);
-    }
-
-    // DOM elements
-    const form = document.getElementById('loginForm');
+    const loginForm = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const messageDiv = document.getElementById('message');
-    const googleBtn = document.getElementById('googleSignInBtn');
 
-    // Helper to display messages
     function showMessage(text, isError = true) {
       messageDiv.classList.add('show');
       messageDiv.classList.toggle('error', isError);
@@ -360,8 +305,7 @@
       messageDiv.innerText = text;
     }
 
-    // Email/Password login
-    form.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
@@ -371,60 +315,36 @@
         return;
       }
 
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          const anonUsername = generateAnonymousUsername();
-          saveAnonymousUsername(anonUsername);
-          showMessage('Login successful! Redirecting...', false);
-          setTimeout(() => {
-            globalThis.location.href = '../index.html';
-          }, 1500);
-        })
-        .catch((error) => {
-          let errorMessage = '';
-          switch (error.code) {
-            case 'auth/user-not-found':
-              errorMessage = 'No account found with this email.';
-              break;
-            case 'auth/wrong-password':
-              errorMessage = 'Incorrect password. Please try again.';
-              break;
-            case 'auth/invalid-email':
-              errorMessage = 'Invalid email address.';
-              break;
-            case 'auth/too-many-requests':
-              errorMessage = 'Too many failed attempts. Please try again later.';
-              break;
-            default:
-              errorMessage = 'Sign-in failed. Please check your credentials.';
+      const result = await handleLogin(email, password);
+      if (result.success) {
+        showMessage('Login successful! Redirecting...', false);
+        
+        // Fetch user data from localStorage to decide redirect
+        const user = JSON.parse(localStorage.getItem('kathaa_user'));
+        
+        setTimeout(() => {
+          if (user.role === 'mentor') {
+            if (user.is_verified) {
+              window.location.href = 'mentor-dashboard.html';
+            } else {
+              window.location.href = 'mentor-verify.html';
+            }
+          } else {
+            window.location.href = 'feed.html';
           }
-          showMessage(errorMessage, true);
-        });
+        }, 1200);
+      } else {
+        showMessage(result.message || 'Login failed.', true);
+      }
     });
 
-    // Google Sign-In
+    // Google Sign-In (Optional: placeholder for now since backend auth focuses on email/pass)
+    const googleBtn = document.getElementById('googleSignInBtn');
     googleBtn.addEventListener('click', () => {
-      signInWithPopup(auth, googleProvider)
-        .then(() => {
-          const anonUsername = generateAnonymousUsername();
-          saveAnonymousUsername(anonUsername);
-          showMessage('Google sign-in successful! Redirecting...', false);
-          setTimeout(() => {
-            globalThis.location.href = '../index.html';
-          }, 1500);
-        })
-        .catch((error) => {
-          let errorMessage = '';
-          if (error.code === 'auth/popup-blocked') {
-            errorMessage = 'Popup was blocked. Please allow popups for this site.';
-          } else if (error.code === 'auth/cancelled-popup-request') {
-            errorMessage = 'Sign-in cancelled.';
-          } else {
-            errorMessage = 'Google sign-in failed. Please try again.';
-          }
-          showMessage(errorMessage, true);
-        });
+        showMessage('Google sign-in is currently undergoing maintenance. Please use email/password.', true);
     });
   </script>
+    </div>
+  </div>
 </body>
 </html>

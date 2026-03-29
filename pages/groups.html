@@ -8,102 +8,42 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/responsive.css">
-  <style>
-    /* Specific styles for Groups & Clubhouse */
-    .groups-container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
-    .group-card { 
-      background: white; border-radius: 12px; padding: 1.5rem; 
-      margin-bottom: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      border: 1px solid #f0f0f0; transition: transform 0.2s;
-    }
-    .group-card:hover { transform: translateY(-2px); }
-    .group-header { display: flex; justify-content: space-between; align-items: start; }
-    .group-category { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #888; }
-    
-    /* Clubhouse Tab Styles */
-    .clubhouse-tabs { display: flex; gap: 1rem; border-bottom: 1px solid #eee; margin-top: 2rem; }
-    .tab-btn { 
-      background: none; border: none; padding: 0.75rem 1rem; cursor: pointer;
-      font-family: inherit; font-size: 0.95rem; color: #666; border-bottom: 2px solid transparent;
-    }
-    .tab-btn.active { color: #f2a65a; border-bottom-color: #f2a65a; font-weight: 500; }
-    
-    .clubhouse-section { display: none; margin-top: 1.5rem; }
-    .clubhouse-section.active { display: block; }
-    
-    .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
-    .room-card { 
-      background: #fff; border-radius: 16px; padding: 1.25rem;
-      border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-    }
-    .room-status { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #10b981; }
-    .room-status.empty { color: #9ca3af; }
-    .room-title { font-size: 1.1rem; margin: 0.5rem 0; font-family: 'Cormorant Garamond', serif; }
-    
-    /* Avatar Grid */
-    .participant-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
-    .participant-avatar { 
-      width: 40px; height: 40px; border-radius: 50%; background: #eee;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; border: 2px solid transparent;
-    }
-    .participant-avatar.speaking { border-color: #f2a65a; animation: pulse-ring 1.5s infinite; }
-    @keyframes pulse-ring {
-      0% { box-shadow: 0 0 0 0 rgba(242, 166, 90, 0.4); }
-      70% { box-shadow: 0 0 0 8px rgba(242, 166, 90, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(242, 166, 90, 0); }
-    }
-    
-    /* Mentor Card */
-    .mentor-card {
-      background: linear-gradient(135deg, #fff5e6 0%, #ffffff 100%);
-      border: 1px solid #ffe4bc; border-radius: 12px; padding: 1rem; margin-top: 1rem;
-    }
-    .mentor-tag { background: #f2a65a; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; }
-  </style>
 </head>
 <body>
   <div class="katha-wrapper">
     <header class="site-header">
-      <div class="logo-area">
-        <span class="brand-name">Kathaa</span>
-        <span class="brand-sub">कथा</span>
-      </div>
-      <nav class="primary-nav">
-        <a href="../index.html" class="nav-link">Home</a>
-        <a href="feed.html" class="nav-link">Stories</a>
-        <a href="groups.html" class="nav-link active">Groups</a>
-        <a href="tracker.html" class="nav-link">Mood diary</a>
-        <a href="profile.html" class="nav-link">My space</a>
-      </nav>
-    </header>
+    <div class="logo-area">
+      <span class="diya-icon">🪔</span>
+      <span class="brand-name">Kathaa</span>
+      <span class="brand-sub">कथा</span>
+    </div>
+    <nav class="primary-nav">
+      <!-- Populated dynamically by auth-check.js -->
+    </nav>
+  </header>
 
     <main class="groups-container">
       <div id="groupListView">
-        <h1 class="serif-heading">Safe Spaces & Communities</h1>
-        <p>Find a circle that understands. Join a group based on shared experiences or moderated by professionals.</p>
-        <div id="groupsList" style="margin-top: 2rem;"></div>
+        <span class="section-label">Community Circles</span>
+        <h1 class="hero-title" style="font-size: 3.2rem; margin-bottom: 0.5rem;">Safe Spaces & <br>Communities</h1>
+        <p class="hero-tagline" style="margin-bottom: 3rem;">Find a circle that understands. Join a group based on shared experiences or moderated by professionals.</p>
+        <div id="groupsList"></div>
       </div>
 
       <div id="groupDetailView" style="display: none;">
         <button onclick="showGroupList()" class="btn-outline" style="margin-bottom: 1rem;">← Back to groups</button>
         <div id="groupDetailHeader"></div>
         
-        <div class="clubhouse-tabs">
-          <button class="tab-btn active" onclick="switchTab('feed')">Discussion</button>
-          <button class="tab-btn" onclick="switchTab('clubhouse')">Clubhouse 🎙️</button>
+        <div class="chautari-tabs">
+          <button class="tab-btn active" onclick="switchTab('chautari')">Chautari 🎙️</button>
           <button class="tab-btn" onclick="switchTab('sessions')">Mentor Sessions</button>
         </div>
 
-        <section id="tab-feed" class="clubhouse-section active">
-          <p style="color: #666; font-style: italic;">Group discussion feed coming soon...</p>
-        </section>
-
-        <section id="tab-clubhouse" class="clubhouse-section">
+        <section id="tab-chautari" class="chautari-section active">
           <div class="room-grid" id="activeRooms"></div>
         </section>
 
-        <section id="tab-sessions" class="clubhouse-section">
+        <section id="tab-sessions" class="chautari-section">
           <div id="mentorSessionsList"></div>
         </section>
       </div>
@@ -111,6 +51,17 @@
 
     <!-- Daily.co Library -->
     <script src="https://unpkg.com/@daily-co/daily-js"></script>
+    <script type="module" src="../js/auth-check.js"></script>
+    <script type="module">
+        import { logout } from '../js/auth.js';
+        const navLogout = document.getElementById('navLogout');
+        if (navLogout) {
+            navLogout.addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+        }
+    </script>
     <script type="module" src="../js/groups.js?v=3"></script>
   </div>
 </body>

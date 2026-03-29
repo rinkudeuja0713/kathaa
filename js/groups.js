@@ -1,4 +1,4 @@
-import { getGroups, getGroup, joinGroup, getClubhouseRooms, joinAudioRoom, rsvpMentorSession } from './api.js';
+import { getGroups, getGroup, joinGroup, getChautariRooms, joinAudioRoom, rsvpMentorSession } from './api.js';
 
 const groupsList = document.getElementById('groupsList');
 const groupListView = document.getElementById('groupListView');
@@ -18,16 +18,14 @@ function renderGroups(groups) {
   groupsList.innerHTML = '';
   groups.forEach(group => {
     const card = document.createElement('div');
-    card.className = 'group-card';
+    card.className = 'group-card-premium';
     card.innerHTML = `
-      <div class="group-header">
-        <div>
-          <span class="group-category">${group.category}</span>
-          <h2 class="serif-heading" style="margin: 0.2rem 0;">${group.name}</h2>
-          <p style="font-size: 0.9rem; color: #666;">${group.description}</p>
-        </div>
-        <button class="btn-primary" onclick="window.enterGroup('${group.id}')">Enter Space</button>
+      <div class="group-info-main">
+        <span class="group-card-category">${group.category || 'Support'}</span>
+        <h2 class="serif-heading">${group.name}</h2>
+        <p>${group.description}</p>
       </div>
+      <button class="btn-primary" onclick="window.enterGroup('${group.id}')" style="padding: 0.8rem 2rem; min-width: 140px;">Enter Space</button>
     `;
     groupsList.appendChild(card);
   });
@@ -40,10 +38,8 @@ window.enterGroup = async function(groupId) {
   groupListView.style.display = 'none';
   groupDetailView.style.display = 'block';
   
-  // Load Clubhouse data
-  loadClubhouse(groupId);
-  // Load Discussion board
-  loadDiscussion(groupId);
+  // Load Chautari data
+  loadChautari(groupId);
 };
 
 window.showGroupList = function() {
@@ -53,17 +49,17 @@ window.showGroupList = function() {
 
 function renderGroupDetail(group) {
   groupDetailHeader.innerHTML = `
-    <span class="group-category">${group.category}</span>
+    <span class="section-label">${group.category}</span>
     <h1 class="serif-heading" style="margin-top: 0.2rem;">${group.name}</h1>
-    <p>${group.description}</p>
+    <p class="groups-detail-desc">${group.description}</p>
     <div style="margin-top: 1rem;">
-      <span style="font-size: 0.85rem; color: #888;">${group.members.length} hearts sharing this space</span>
+      <span class="groups-detail-meta">${group.members.length} hearts sharing this space</span>
     </div>
   `;
 }
 
-async function loadClubhouse(groupId) {
-  const data = await getClubhouseRooms(groupId);
+async function loadChautari(groupId) {
+  const data = await getChautariRooms(groupId);
   renderRooms(data.rooms);
   renderSessions(data.sessions);
 }
@@ -71,22 +67,34 @@ async function loadClubhouse(groupId) {
 function renderRooms(rooms) {
   activeRooms.innerHTML = '';
   if (rooms.length === 0) {
-    activeRooms.innerHTML = '<p>No active rooms right now. Be the first to start a conversation?</p>';
+    activeRooms.innerHTML = `
+      <div class="chautari-empty-state">
+        <p style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎙️</p>
+        <p style="font-style: italic; font-size: 0.95rem;">No active rooms right now. Be the first to start a conversation?</p>
+      </div>`;
     return;
   }
   
   rooms.forEach(room => {
     const card = document.createElement('div');
-    card.className = 'room-card';
+    card.className = 'active-room-card';
     card.innerHTML = `
-      <span class="room-status ${room.status}">${room.status}</span>
-      <h3 class="room-title">${room.name}</h3>
-      <div class="participant-grid" id="participants-${room.id}">
-        ${renderSkeletonParticipants()}
+      <div class="status-badge">
+        <span class="pulse-dot"></span> Active
       </div>
-      <button class="btn-primary" style="width: 100%; margin-top: 1rem;" 
+      <h3 class="room-title-premium" style="margin-top: 0.8rem; margin-bottom: 1.8rem;">${room.name}</h3>
+      <div class="participant-row">
+        <div class="avatar-stack">
+          <div class="avatar-circle active" title="Storyteller">👤</div>
+          <div class="avatar-circle" title="Listener 1">👤</div>
+          <div class="avatar-circle" title="Listener 2">👤</div>
+          <div class="avatar-circle avatar-circle-more">+5</div>
+        </div>
+        <span class="room-listening-label">listening</span>
+      </div>
+      <button class="join-room-btn" 
               onclick="window.joinRoom('${room.id}')">
-        ${room.status === 'empty' ? '🏠 Open Room' : '🎙️ Join Room'}
+        🎙️ Join Room
       </button>
     `;
     activeRooms.appendChild(card);
@@ -115,178 +123,60 @@ function simulateSpeaking() {
 function renderSessions(sessions) {
   mentorSessionsList.innerHTML = '';
   if (sessions.length === 0) {
-    mentorSessionsList.innerHTML = '<p>No scheduled sessions this week.</p>';
+    mentorSessionsList.innerHTML = '<p class="chautari-sessions-empty">No scheduled sessions this week.</p>';
     return;
   }
   
   sessions.forEach(session => {
-    const date = new Date(session.scheduledTime).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+    // Format date like Image 5: Mar 29, 2026, 1:00 PM
+    const dateObj = new Date(session.scheduledTime);
+    const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const timeStr = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const fullDateStr = `${dateStr}, ${timeStr}`;
+
     const alreadyRsvped = (session.rsvps || []).includes('test_user');
-    const card = document.createElement('div');
-    card.className = 'mentor-card';
-    card.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <span class="mentor-tag">MENTOR SESSION</span>
-          <h3 class="room-title">${session.topic}</h3>
+    
+    const row = document.createElement('div');
+    row.className = 'mentor-session-row';
+    row.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="flex: 1;">
+          <div class="mentor-tag-small">MENTOR SESSION</div>
+          <h3 class="mentor-session-topic">${session.topic}</h3>
         </div>
-        <div style="text-align: right;">
-          <p style="font-weight: bold; color: #f2a65a;">${date}</p>
-          <p style="font-size: 0.8rem; color: #888;">Duration: ${session.duration}</p>
-        </div>
-      </div>
-      <div style="display: flex; align-items: center; margin-top: 0.75rem; cursor: pointer;" 
-           onclick="window.showMentorProfile('${session.mentorName}', '${session.mentorTitle}', '')">
-        <div class="participant-avatar" style="margin-right: 0.5rem; background: #fdf2f2;">🎓</div>
-        <div>
-          <p style="font-weight: 500; margin: 0;">${session.mentorName} 🔗</p>
-          <p style="font-size: 0.8rem; color: #666; margin: 0;">${session.mentorTitle}</p>
+        <div style="text-align: right; min-width: 150px;">
+          <p style="font-size: 0.95rem; color: var(--warm-gold); font-weight: 600; margin: 0;">${fullDateStr}</p>
+          <p class="session-duration-line">Duration: ${session.duration}</p>
         </div>
       </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; border-top: 1px solid #ffe4bc; padding-top: 0.75rem;">
-        <span style="font-size: 0.8rem; color: #d68735;">${session.rsvpCount} people attending</span>
-        <button class="btn-outline ${alreadyRsvped ? 'rsvped' : ''}" 
+
+      <div class="mentor-info-line">
+        <span class="mentor-icon">🎓</span>
+        <span class="session-mentor-name">${session.mentorName}</span>
+        <span class="mentor-icon-link">🔗</span>
+      </div>
+      <div class="mentor-title-small">
+        ${session.mentorTitle}
+      </div>
+
+      <div class="mentor-rsvp-bar">
+        <span class="attending-count">${session.rsvpCount} people attending</span>
+        <button class="btn-rsvp-pill ${alreadyRsvped ? 'rsvped' : ''}" 
                 id="rsvp-btn-${session.id}"
                 onclick="window.rsvp('${session.id}')"
-                ${alreadyRsvped ? 'disabled' : ''}
-                style="${alreadyRsvped ? 'opacity: 0.7; cursor: default; border-color: #10b981; color: #10b981;' : ''}">
-          ${alreadyRsvped ? '✅ Attending' : '📅 RSVP & Remind Me'}
+                ${alreadyRsvped ? 'disabled' : ''}>
+          ${alreadyRsvped ? '📅 RSVP & Remind Me' : '📅 RSVP & Remind Me'}
         </button>
       </div>
     `;
-    mentorSessionsList.appendChild(card);
+    mentorSessionsList.appendChild(row);
   });
 }
 
-// ========================
-// DISCUSSION BOARD
-// ========================
-async function loadDiscussion(groupId) {
-  const feedEl = document.getElementById('tab-feed');
-  if (!feedEl) return;
-  
-  // Load posts from the backend
-  let posts = [];
-  try {
-    const res = await fetch(`http://127.0.0.1:5000/api/groups/${groupId}/posts`);
-    if (res.ok) posts = await res.json();
-  } catch(e) {
-    console.warn('Could not load discussion posts:', e);
-  }
-
-  feedEl.innerHTML = `
-    <div style="margin-bottom: 1.5rem;">
-      <div style="background: white; border-radius: 12px; padding: 1.25rem; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-        <textarea id="discussion-input" placeholder="Share a thought, question, or encouragement with the group..." 
-          style="width: 100%; min-height: 80px; border: 1px solid #e5e5e5; border-radius: 8px; padding: 0.75rem; 
-          font-family: inherit; font-size: 0.95rem; resize: vertical; outline: none; transition: border-color 0.2s;
-          background: #fafafa;"
-          onfocus="this.style.borderColor='#f2a65a'; this.style.background='#fff';"
-          onblur="this.style.borderColor='#e5e5e5'; this.style.background='#fafafa';"></textarea>
-        <div style="display: flex; justify-content: flex-end; margin-top: 0.75rem;">
-          <button class="btn-primary" onclick="window.postDiscussion()" style="font-size: 0.85rem; padding: 0.5rem 1.5rem;">
-            💬 Post to Discussion
-          </button>
-        </div>
-      </div>
-    </div>
-    <div id="discussion-posts">
-      ${posts.length === 0 ? `
-        <div style="text-align: center; padding: 3rem 1rem; color: #999;">
-          <p style="font-size: 1.5rem; margin-bottom: 0.5rem;">🌿</p>
-          <p style="font-style: italic; font-size: 0.95rem;">This space is waiting for voices. Be the first to share a thought.</p>
-        </div>
-      ` : posts.map(p => renderDiscussionPost(p)).join('')}
-    </div>
-  `;
-}
-
-function renderDiscussionPost(post) {
-  const timeAgo = getTimeAgo(new Date(post.timestamp));
-  return `
-    <div class="discussion-post" style="background: white; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; border: 1px solid #f0f0f0; box-shadow: 0 1px 4px rgba(0,0,0,0.02);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #f2a65a, #e8873a); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: white;">🪔</div>
-          <span style="font-weight: 500; font-size: 0.85rem; color: #555;">Anonymous</span>
-        </div>
-        <span style="font-size: 0.75rem; color: #aaa;">${timeAgo}</span>
-      </div>
-      <p style="margin: 0; font-size: 0.95rem; line-height: 1.6; color: #333;">${escapeHtml(post.text)}</p>
-      <div style="display: flex; gap: 1rem; margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid #f5f5f5;">
-        <button onclick="window.reactToPost('${post.id}', '❤️')" style="background: none; border: none; cursor: pointer; font-size: 0.8rem; color: #999; transition: color 0.2s;" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#999'">
-          ❤️ ${post.reactions?.heart || ''}
-        </button>
-        <button onclick="window.reactToPost('${post.id}', '🤗')" style="background: none; border: none; cursor: pointer; font-size: 0.8rem; color: #999; transition: color 0.2s;" onmouseover="this.style.color='#f39c12'" onmouseout="this.style.color='#999'">
-          🤗 ${post.reactions?.hug || ''}
-        </button>
-        <button onclick="window.reactToPost('${post.id}', '💪')" style="background: none; border: none; cursor: pointer; font-size: 0.8rem; color: #999; transition: color 0.2s;" onmouseover="this.style.color='#27ae60'" onmouseout="this.style.color='#999'">
-          💪 ${post.reactions?.strength || ''}
-        </button>
-      </div>
-    </div>
-  `;
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-function getTimeAgo(date) {
-  const now = new Date();
-  const diff = Math.floor((now - date) / 1000);
-  if (diff < 60) return 'just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
-}
-
-window.postDiscussion = async function() {
-  const input = document.getElementById('discussion-input');
-  const text = input?.value?.trim();
-  if (!text) {
-    showToast('Write something to share first 🖊️');
-    return;
-  }
-  
-  try {
-    const res = await fetch(`http://127.0.0.1:5000/api/groups/${currentGroupId}/posts`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, authorId: 'test_user' })
-    });
-    if (res.ok) {
-      input.value = '';
-      showToast('✨ Shared with the group');
-      loadDiscussion(currentGroupId);
-    } else {
-      showToast('Could not post — try again');
-    }
-  } catch(e) {
-    showToast('Server error — is the backend running?');
-  }
-};
-
-window.reactToPost = async function(postId, emoji) {
-  try {
-    const res = await fetch(`http://127.0.0.1:5000/api/groups/${currentGroupId}/posts/${postId}/react`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ emoji, userId: 'test_user' })
-    });
-    if (res.ok) {
-      loadDiscussion(currentGroupId);
-    }
-  } catch(e) {
-    console.warn('React failed:', e);
-  }
-};
 
 window.switchTab = function(tabName) {
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('.clubhouse-section').forEach(sec => sec.classList.remove('active'));
+  document.querySelectorAll('.chautari-section').forEach(sec => sec.classList.remove('active'));
   
   event.target.classList.add('active');
   document.getElementById(`tab-${tabName}`).classList.add('active');
@@ -423,9 +313,7 @@ function applyVoicePreset(presetName) {
   voiceState.waveshaper.curve = preset.distort ? createWaveShaperCurve(50) : null;
 
   document.querySelectorAll('.voice-preset-btn').forEach(btn => {
-    btn.style.background = btn.dataset.preset === presetName
-      ? 'linear-gradient(135deg, #d4813a, #c06828)' : 'rgba(200,169,110,0.1)';
-    btn.style.color = btn.dataset.preset === presetName ? 'white' : '#c8a96e';
+    btn.classList.toggle('active', btn.dataset.preset === presetName);
   });
 }
 
@@ -447,7 +335,7 @@ function cleanupVoiceChanger() {
 // ========================
 // ROOM STATE
 // ========================
-const SPEAK_TIME_LIMIT = 90;
+const SPEAK_TIME_LIMIT = 90; // 90 seconds
 let roomState = {
   handQueue: [],
   currentSpeaker: null,
@@ -485,18 +373,14 @@ async function initDaily(url) {
   const topBar = document.createElement('div');
   topBar.style.cssText = `
     display: flex; justify-content: space-between; align-items: center;
-    padding: 0.6rem 1.5rem; background: rgba(14,11,8,0.97);
-    border-bottom: 1px solid rgba(200,169,110,0.15);
+    padding: 0.8rem 1.8rem; background: rgba(14,11,8,0.98);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
   `;
   topBar.innerHTML = `
-    <span style="color: #c8a96e; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem;">🪔 Kathaa Clubhouse</span>
-    <div style="display: flex; gap: 0.75rem; align-items: center;">
-      <span id="room-participant-count" style="color: #7a6e60; font-size: 0.8rem;">0 in room</span>
-      <button id="leave-room-btn" style="
-        background: linear-gradient(135deg, #d4813a, #c06828); color: white;
-        border: none; padding: 0.45rem 1.2rem; border-radius: 999px;
-        cursor: pointer; font-family: inherit; font-weight: 500; font-size: 0.85rem;
-      ">🚪 Leave</button>
+    <span style="color: #c8a96e; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 500;">🪔 Kathaa Chautari</span>
+    <div style="display: flex; gap: 1.25rem; align-items: center;">
+      <span id="room-participant-count" style="color: #7a6e60; font-size: 0.8rem; font-weight: 500;">0 in room</span>
+      <button id="leave-room-btn" class="btn-leave-premium">🚪 Leave</button>
     </div>
   `;
   overlay.appendChild(topBar);
@@ -504,21 +388,15 @@ async function initDaily(url) {
   // Voice changer bar
   const voiceBar = document.createElement('div');
   voiceBar.style.cssText = `
-    display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.5rem 1.5rem; background: rgba(24,20,16,0.95);
-    border-bottom: 1px solid rgba(200,169,110,0.08);
-    overflow-x: auto;
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.75rem 1.8rem; background: rgba(24,20,16,0.9);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    overflow-x: auto; scrollbar-width: none;
   `;
   voiceBar.innerHTML = `
-    <span style="color: #7a6e60; font-size: 0.75rem; margin-right: 0.3rem; white-space: nowrap;">Voice:</span>
+    <span style="color: #7a6e60; font-size: 0.75rem; margin-right: 0.5rem; font-weight: 500;">Voice:</span>
     ${Object.entries(VOICE_PRESETS).map(([key, preset]) => `
-      <button class="voice-preset-btn" data-preset="${key}" style="
-        background: ${key === 'normal' ? 'linear-gradient(135deg, #d4813a, #c06828)' : 'rgba(200,169,110,0.08)'};
-        color: ${key === 'normal' ? 'white' : '#c8a96e'};
-        border: 1px solid rgba(200,169,110,0.15); padding: 0.3rem 0.7rem;
-        border-radius: 999px; cursor: pointer; font-size: 0.75rem;
-        font-family: inherit; white-space: nowrap; transition: all 0.2s;
-      ">${preset.label}</button>
+      <button class="voice-preset-btn ${key === 'normal' ? 'active' : ''}" data-preset="${key}">${preset.label}</button>
     `).join('')}
   `;
   overlay.appendChild(voiceBar);
@@ -547,7 +425,7 @@ async function initDaily(url) {
             width: 120px; height: 120px; border-radius: 50%;
             background: rgba(212,129,58,0.12); border: 3px solid #d4813a;
             display: flex; align-items: center; justify-content: center;
-            font-size: 3rem; animation: pulse-ring 2s infinite;
+            font-size: 3.2rem; animation: pulse-ring 2s infinite;
           ">🪔</div>
         </div>
         <p id="speaker-name" style="color: #c8a96e; font-size: 1rem; margin-top: 0.75rem; font-weight: 500;">Speaking</p>
@@ -569,10 +447,10 @@ async function initDaily(url) {
     <div style="border-top: 1px solid rgba(200,169,110,0.08); margin: 0 1.5rem;"></div>
 
     <!-- AUDIENCE -->
-    <div style="padding: 1rem 1.5rem;">
-      <p style="color: #7a6e60; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem;">👥 Listeners</p>
+    <div style="padding: 1.5rem 1.8rem;">
+      <p style="color: #7a6e60; font-size: 0.72rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.1em; margin-bottom: 1rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 1.5rem;">👥 Listeners</p>
       <div id="audience-grid" style="
-        display: flex; flex-wrap: wrap; gap: 1rem;
+        display: flex; flex-wrap: wrap; gap: 1.5rem;
       "></div>
     </div>
   `;
@@ -581,24 +459,32 @@ async function initDaily(url) {
   // Bottom controls
   const controls = document.createElement('div');
   controls.style.cssText = `
-    display: flex; justify-content: center; align-items: center; gap: 1.2rem;
-    padding: 1rem; background: rgba(14,11,8,0.97);
-    border-top: 1px solid rgba(200,169,110,0.12);
+    display: flex; justify-content: center; align-items: center; gap: 1.5rem;
+    padding: 1.5rem; background: rgba(14,11,8,0.98);
+    border-top: 1px solid rgba(255,255,255,0.05);
   `;
   controls.innerHTML = `
     <button id="mic-toggle-btn" style="
-      width: 56px; height: 56px; border-radius: 50%;
-      background: rgba(200,169,110,0.12); border: 2px solid rgba(200,169,110,0.25);
-      color: #c8a96e; font-size: 1.3rem; cursor: pointer;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: rgba(45, 41, 38, 0.8); border: 1px solid rgba(255,255,255,0.1);
+      color: #fff; font-size: 1.5rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-    " title="Toggle microphone">🎤</button>
+    " title="Toggle microphone">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+        <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+        <line x1="12" y1="19" x2="12" y2="23"></line>
+        <line x1="8" y1="23" x2="16" y2="23"></line>
+      </svg>
+    </button>
     <button id="hand-raise-btn" style="
-      width: 56px; height: 56px; border-radius: 50%;
-      background: rgba(200,169,110,0.12); border: 2px solid rgba(200,169,110,0.25);
-      color: #c8a96e; font-size: 1.3rem; cursor: pointer;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: rgba(45, 41, 38, 0.8); border: 1px solid rgba(255,255,255,0.1);
+      color: #f2a65a; font-size: 1.5rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center; transition: all 0.2s;
     " title="Raise hand to speak">✋</button>
-    <p id="mic-status" style="color: #7a6e60; font-size: 0.75rem; min-width: 90px;">Mic muted</p>
+    <p id="mic-status" style="color: #666; font-size: 0.82rem; min-width: 100px; font-weight: 500;">Mic muted</p>
   `;
   overlay.appendChild(controls);
 
@@ -695,22 +581,61 @@ async function initDaily(url) {
     isMuted = !isMuted;
     callFrame.setLocalAudio(!isMuted);
     const btn = document.getElementById('mic-toggle-btn');
-    btn.innerHTML = isMuted ? '🎤' : '🔴';
-    btn.style.background = isMuted ? 'rgba(200,169,110,0.12)' : 'rgba(212,129,58,0.25)';
-    btn.style.borderColor = isMuted ? 'rgba(200,169,110,0.25)' : '#d4813a';
-    document.getElementById('mic-status').textContent = isMuted ? 'Mic muted' : 'Speaking';
-    document.getElementById('mic-status').style.color = isMuted ? '#7a6e60' : '#d4813a';
+    const micSvg = `
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+        <line x1="12" y1="19" x2="12" y2="23"></line>
+        <line x1="8" y1="23" x2="16" y2="23"></line>
+      </svg>
+    `;
+    const micOffSvg = `
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+        <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+        <line x1="12" y1="19" x2="12" y2="23"></line>
+        <line x1="8" y1="23" x2="16" y2="23"></line>
+      </svg>
+    `;
+
+    btn.innerHTML = isMuted ? micOffSvg : micSvg;
+    btn.style.background = isMuted ? 'rgba(45, 41, 38, 0.8)' : 'rgba(212, 129, 58, 0.2)';
+    btn.style.borderColor = isMuted ? 'rgba(255, 255, 255, 0.1)' : 'var(--amber-cta)';
+    btn.style.color = isMuted ? '#999' : 'white';
+    
+    const statusText = document.getElementById('mic-status');
+    statusText.textContent = isMuted ? 'Mic muted' : 'Speaking';
+    statusText.style.color = isMuted ? '#666' : 'var(--amber-cta)';
   };
 
   // --- Hand raise ---
   document.getElementById('hand-raise-btn').onclick = () => {
     const myId = roomState.localSessionId;
     
-    // Check if local user is the speaker (by session_id match or by .local flag)
+    // Check if local user is the speaker — if so, they are giving up the stage
     if (isLocalSpeaker()) {
-      showToast("You're already on stage!");
+      showToast('Relinquishing stage...');
+      // Mute first
+      isMuted = true;
+      callFrame.setLocalAudio(false);
+      const mBtn = document.getElementById('mic-toggle-btn');
+      const micSvg = `
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+          <line x1="12" y1="19" x2="12" y2="23"></line>
+          <line x1="8" y1="23" x2="16" y2="23"></line>
+        </svg>
+      `;
+      mBtn.innerHTML = micSvg;
+      mBtn.style.background = 'rgba(45, 41, 38, 0.8)';
+      document.getElementById('mic-status').textContent = 'Mic muted';
+      
+      advanceSpeaker(callFrame);
       return;
     }
+    
     if (roomState.handQueue.includes(myId)) {
       // Lower hand
       roomState.handQueue = roomState.handQueue.filter(id => id !== myId);
@@ -905,10 +830,23 @@ function renderRoom(callFrame) {
       const mentorName = speaker.userData?.name || speaker.user_name || 'Anonymous';
       
       document.getElementById('speaker-avatar').innerHTML = (isVerified ? '🎗️' : (isLocal ? '🪔' : '👤'));
+      document.getElementById('speaker-avatar').style.borderColor = isVerified ? 'var(--amber-cta)' : 'rgba(212, 129, 58, 1)';
+      document.getElementById('speaker-avatar').style.background = isVerified ? 'rgba(212, 129, 58, 0.12)' : 'rgba(212, 129, 58, 0.12)';
+      document.getElementById('speaker-avatar').style.fontSize = '3.2rem';
+      
       document.getElementById('speaker-name').innerHTML = `
         ${isVerified ? '<span style="color: #d4813a; font-weight: 600;">🎗️ ' + mentorName + '</span>' : (isLocal ? 'You' : mentorName)}
         ${isVerified ? '<br><span style="font-size: 0.65rem; color: #c8a96e; opacity: 0.8;">' + (speaker.userData?.role_title || 'Verified Mentor') + '</span>' : ''}
       `;
+
+      // Update button for speaker
+      if (isLocal) {
+        const hrBtn = document.getElementById('hand-raise-btn');
+        hrBtn.innerHTML = '🛑'; 
+        hrBtn.title = 'Stop Speaking (Relinquish turn)';
+        hrBtn.style.background = 'rgba(196, 30, 58, 0.2)';
+        hrBtn.style.borderColor = '#c41e3a';
+      }
 
     } else {
       // Speaker not found in participants — they may have left
@@ -943,6 +881,17 @@ function renderRoom(callFrame) {
     }).join('');
   } else {
     queueBar.style.display = 'none';
+  }
+
+  // Reset button if not local speaker
+  if (!isLocalSpeaker()) {
+    const hrBtn = document.getElementById('hand-raise-btn');
+    const myId = roomState.localSessionId;
+    const inQueue = roomState.handQueue.includes(myId);
+    hrBtn.innerHTML = '✋';
+    hrBtn.title = 'Raise hand to speak';
+    hrBtn.style.background = inQueue ? 'rgba(212,129,58,0.25)' : 'rgba(45, 41, 38, 0.8)';
+    hrBtn.style.borderColor = inQueue ? '#d4813a' : 'rgba(255, 255, 255, 0.1)';
   }
 
   // --- AUDIENCE ---

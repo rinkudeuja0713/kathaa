@@ -8,20 +8,35 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-clubhouse_bp = Blueprint('clubhouse', __name__)
+chautari_bp = Blueprint('chautari', __name__)
 
 STORAGE_PATH = os.path.join(os.path.dirname(__file__), '../data/storage.json')
 DAILY_API_KEY = os.getenv('DAILY_API_KEY')
 DAILY_API_URL = 'https://api.daily.co/v1'
 
+_data_cache = None
+_last_mtime = 0
+
 def load_data():
+    global _data_cache, _last_mtime
+    
     if not os.path.exists(STORAGE_PATH):
         return {"posts": [], "moods": [], "groups": [], "rooms": [], "sessions": []}
+    
+    mtime = os.path.getmtime(STORAGE_PATH)
+    if _data_cache is not None and mtime == _last_mtime:
+        return _data_cache
+    
     with open(STORAGE_PATH, 'r') as f:
-        data = json.load(f)
-        if "rooms" not in data: data["rooms"] = []
-        if "sessions" not in data: data["sessions"] = []
-        return data
+        try:
+            data = json.load(f)
+            if "rooms" not in data: data["rooms"] = []
+            if "sessions" not in data: data["sessions"] = []
+            _data_cache = data
+            _last_mtime = mtime
+            return data
+        except json.JSONDecodeError:
+            return {"posts": [], "moods": [], "groups": [], "rooms": [], "sessions": []}
 
 def save_data(data):
     with open(STORAGE_PATH, 'w') as f:
@@ -48,7 +63,6 @@ def create_daily_room(room_name):
             'start_audio_off': True,       # Mic off by default
             'start_video_off': True,       # No video — audio only platform
             'enable_chat': False,          # No chat per spec
-            'enable_video_processing': False,  # Disable video processing
             'exp': int((datetime.datetime.now() + datetime.timedelta(hours=4)).timestamp()),
         }
     }
@@ -65,7 +79,7 @@ def create_daily_room(room_name):
         return None, f"Failed to connect to Daily.co: {str(e)}"
 
 
-@clubhouse_bp.route('/api/clubhouse/rooms/<group_id>', methods=['GET'])
+@chautari_bp.route('/api/chautari/rooms/<group_id>', methods=['GET'])
 def get_rooms(group_id):
     data = load_data()
     rooms = [r for r in data.get('rooms', []) if r['groupId'] == group_id]
@@ -76,7 +90,7 @@ def get_rooms(group_id):
     })
 
 
-@clubhouse_bp.route('/api/clubhouse/rooms/join', methods=['POST'])
+@chautari_bp.route('/api/chautari/rooms/join', methods=['POST'])
 def join_room():
     payload = request.json
     room_id = payload.get('roomId')
@@ -116,7 +130,7 @@ def join_room():
     })
 
 
-@clubhouse_bp.route('/api/clubhouse/config-check', methods=['GET'])
+@chautari_bp.route('/api/chautari/config-check', methods=['GET'])
 def config_check():
     """Health check endpoint to verify Daily.co API key is working."""
     if not DAILY_API_KEY:
@@ -139,13 +153,13 @@ def config_check():
         return jsonify({'configured': False, 'message': str(e)})
 
 
-@clubhouse_bp.route('/api/clubhouse/sessions', methods=['GET'])
+@chautari_bp.route('/api/chautari/sessions', methods=['GET'])
 def get_all_sessions():
     data = load_data()
     return jsonify(data.get('sessions', []))
 
 
-@clubhouse_bp.route('/api/clubhouse/sessions/rsvp', methods=['POST'])
+@chautari_bp.route('/api/chautari/sessions/rsvp', methods=['POST'])
 def rsvp_session():
     payload = request.json
     session_id = payload.get('sessionId')

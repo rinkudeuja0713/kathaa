@@ -81,11 +81,12 @@
     }
 
     .emergency-number .num {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.4rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.5rem;
       color: #f0e8d8;
       font-weight: 600;
       line-height: 1.1;
+      letter-spacing: -0.5px;
     }
 
     .emergency-number .num-label {
@@ -205,11 +206,11 @@
     .org-contact-row a:hover { color: #c8a96e; }
 
     .org-contact-row .phone {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
-      color: var(--cream-heading);
-      font-weight: 600;
-      letter-spacing: 0.3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--warm-gold);
+      font-weight: 500;
+      letter-spacing: 0.2px;
     }
 
     .free-tag {
@@ -259,11 +260,7 @@
       <span class="brand-sub">कथा</span>
     </div>
     <nav class="primary-nav">
-      <a href="../index.html" class="nav-link">Home</a>
-      <a href="feed.html" class="nav-link">Stories</a>
-      <a href="tracker.html" class="nav-link">Mood diary</a>
-      <a href="professionals.html" class="nav-link nav-link-support active">Get support</a>
-      <a href="profile.html" class="nav-link">My space</a>
+      <!-- Populated dynamically by auth-check.js -->
     </nav>
   </header>
 
@@ -476,6 +473,7 @@
 
   </main>
 
+  <script type="module" src="../js/auth-check.js"></script>
   <script src="../js/didi.js"></script>
 </body>
 </html>

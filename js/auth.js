@@ -1,87 +1,80 @@
-(function() {
-  const ANON_ID_KEY = 'kathaa_anonymous_id';
-  const USER_EMAIL_KEY = 'kathaa.user.email';
-  const LOGGED_IN_KEY = 'kathaa.user.loggedIn';
-  const API_BASE = 'http://127.0.0.1:5000/api/auth';
+import { login, signup, getProfile, switchPersona } from './api.js';
 
-  function getOrCreateAnonId() {
-    let id = localStorage.getItem(ANON_ID_KEY);
-    if (!id) {
-      id = 'anon_' + Math.random().toString(36).substring(2, 12) + Date.now().toString(36);
-      localStorage.setItem(ANON_ID_KEY, id);
+export const AUTH_USER_KEY = 'kathaa_user';
+export const ANON_NAME_KEY = 'kathaa_anonymous_username';
+
+export function getUserId() {
+  const user = JSON.parse(localStorage.getItem(AUTH_USER_KEY));
+  return user ? user.email : null;
+}
+
+export function getUserRole() {
+  const user = JSON.parse(localStorage.getItem(AUTH_USER_KEY));
+  return user ? user.role : 'storyteller';
+}
+
+export function isVerified() {
+  const user = JSON.parse(localStorage.getItem(AUTH_USER_KEY));
+  return user ? user.is_verified : false;
+}
+
+export function getActivePersona() {
+  const user = JSON.parse(localStorage.getItem(AUTH_USER_KEY));
+  return user ? user.active_persona : 'storyteller';
+}
+
+export async function handleLogin(email, password) {
+  try {
+    const data = await login(email, password);
+    if (data.success) {
+      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));
+      return { success: true };
     }
-    return id;
+    return { success: false, message: data.message };
+  } catch (err) {
+    console.error('Login error:', err);
+    return { success: false, message: 'Connection error. Is the backend running?' };
   }
+}
 
-  async function signup(email, password, role = 'storyteller', mentor_profile = null) {
-    try {
-      const res = await fetch(`${API_BASE}/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, role, mentor_profile })
-      });
-      return await res.json();
-    } catch (e) {
-      return { success: false, message: 'Server error: ' + e.message };
+export async function handleSignup(userData) {
+  try {
+    const data = await signup(userData);
+    return data;
+  } catch (err) {
+    console.error('Signup error:', err);
+    return { success: false, message: 'Connection error. Is the backend running?' };
+  }
+}
+
+/** Landing page URL from current path (same idea as auth-check `appHref` — avoids broken `/index.html` off site root). */
+function landingPageHref() {
+  const pathname = (window.location.pathname || '').replace(/\\/g, '/');
+  if (pathname.includes('/pages/')) {
+    return '../index.html';
+  }
+  return 'index.html';
+}
+
+export function logout() {
+  localStorage.removeItem(AUTH_USER_KEY);
+  localStorage.removeItem(ANON_NAME_KEY);
+  window.location.replace(landingPageHref());
+}
+
+export async function refreshProfile() {
+  const email = getUserId();
+  if (!email) return;
+
+  try {
+    const profile = await getProfile(email);
+    if (profile && !profile.error) {
+      const user = JSON.parse(localStorage.getItem(AUTH_USER_KEY));
+      const updatedUser = { ...user, ...profile };
+      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updatedUser));
+      return updatedUser;
     }
+  } catch (err) {
+    console.error('Profile refresh error:', err);
   }
-
-  async function login(email, password) {
-    try {
-      const res = await fetch(`${API_BASE}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (data.success) {
-        localStorage.setItem(USER_EMAIL_KEY, email);
-        localStorage.setItem(LOGGED_IN_KEY, 'true');
-      }
-      return data;
-    } catch (e) {
-      return { success: false, message: 'Server error: ' + e.message };
-    }
-  }
-
-  async function getProfile() {
-    const email = localStorage.getItem(USER_EMAIL_KEY);
-    if (!email) return null;
-    try {
-      const res = await fetch(`${API_BASE}/profile?email=${email}`);
-      if (res.ok) return await res.json();
-    } catch (e) { console.warn('Profile fetch failed:', e); }
-    return null;
-  }
-
-  async function switchPersona(persona) {
-    const email = localStorage.getItem(USER_EMAIL_KEY);
-    try {
-      const res = await fetch(`${API_BASE}/switch-persona`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, persona })
-      });
-      return await res.json();
-    } catch (e) { return { success: false, message: e.message }; }
-  }
-
-  function logout() {
-    localStorage.removeItem(USER_EMAIL_KEY);
-    localStorage.removeItem(LOGGED_IN_KEY);
-  }
-
-  function isLoggedIn() {
-    return localStorage.getItem(LOGGED_IN_KEY) === 'true';
-  }
-
-  window.kathaaAuth = {
-    getUserId: getOrCreateAnonId,
-    signup,
-    login,
-    logout,
-    isLoggedIn,
-    getProfile,
-    switchPersona
-  };
-})();
+}

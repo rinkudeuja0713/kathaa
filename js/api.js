@@ -1,5 +1,5 @@
 // js/api.js
-const API_BASE = 'http://127.0.0.1:5000/api';
+const API_BASE = 'http://127.0.0.1:5001/api';
 
 export async function getPosts() {
   const res = await fetch(`${API_BASE}/posts`);
@@ -21,7 +21,8 @@ export async function getPostsByTag(tag) {
 }
 
 export async function getUserPosts(userId) {
-  const res = await fetch(`${API_BASE}/posts/user/${userId}`);
+  const res = await fetch(`${API_BASE}/posts/user/${encodeURIComponent(userId)}`);
+  if (!res.ok) throw new Error(`getUserPosts failed: ${res.status}`);
   return res.json();
 }
 
@@ -40,7 +41,7 @@ export async function createMood(moodData) {
 }
 
 export async function getUserMoods(userId) {
-  const res = await fetch(`${API_BASE}/moods/user/${userId}`);
+  const res = await fetch(`${API_BASE}/moods/user/${encodeURIComponent(userId)}`);
   return res.json();
 }
 
@@ -73,14 +74,14 @@ export async function joinGroup(groupId, userId) {
   return res.json();
 }
 
-/** Clubhouse API **/
-export async function getClubhouseRooms(groupId) {
-  const res = await fetch(`${API_BASE}/clubhouse/rooms/${groupId}`);
+/** Chautari API **/
+export async function getChautariRooms(groupId) {
+  const res = await fetch(`${API_BASE}/chautari/rooms/${groupId}`);
   return res.json();
 }
 
 export async function joinAudioRoom(roomId, userId, displayName) {
-  const res = await fetch(`${API_BASE}/clubhouse/rooms/join`, {
+  const res = await fetch(`${API_BASE}/chautari/rooms/join`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ roomId, userId, displayName })
@@ -89,10 +90,52 @@ export async function joinAudioRoom(roomId, userId, displayName) {
 }
 
 export async function rsvpMentorSession(sessionId, userId) {
-  const res = await fetch(`${API_BASE}/clubhouse/sessions/rsvp`, {
+  const res = await fetch(`${API_BASE}/chautari/sessions/rsvp`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ sessionId, userId })
+  });
+  return res.json();
+}
+
+/** Authentication API **/
+export async function login(email, password) {
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  return res.json();
+}
+
+export async function signup(userData) {
+  const res = await fetch(`${API_BASE}/auth/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData)
+  });
+  return res.json();
+}
+
+export async function getProfile(email) {
+  const res = await fetch(`${API_BASE}/auth/profile?email=${encodeURIComponent(email)}`);
+  return res.json();
+}
+
+export async function switchPersona(email, persona) {
+  const res = await fetch(`${API_BASE}/auth/switch-persona`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, persona })
+  });
+  return res.json();
+}
+
+export async function verifyMentorAI(title, bio) {
+  const res = await fetch(`${API_BASE}/ai/verify-mentor`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, bio })
   });
   return res.json();
 }
