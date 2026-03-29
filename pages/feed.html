@@ -4,11 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kathaa — Stories</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Devanagari:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/responsive.css">
   <style>
-    /* Premium toast styling */
     .katha-toast {
       position: fixed;
       bottom: 2rem;
@@ -24,11 +23,6 @@
       animation: toastSlideIn 0.3s ease-out forwards;
       font-family: 'DM Sans', sans-serif;
       color: var(--body-text);
-    }
-    .katha-toast .toast-emoji {
-      font-size: 1.4rem;
-      margin-right: 0.5rem;
-      filter: drop-shadow(0 0 4px var(--amber-cta));
     }
     .katha-toast .toast-message {
       font-size: 0.9rem;
@@ -57,53 +51,121 @@
 <body>
   <div class="katha-wrapper">
     <header class="site-header">
-      <div class="logo-area"><span class="diya-icon">🪔</span><span class="brand-name">Kathaa</span><span class="brand-sub">कथा</span></div>
+      <div class="logo-area">
+        <span class="diya-icon">🪔</span>
+        <span class="brand-name">Kathaa</span>
+        <span class="brand-sub">कथा</span>
+      </div>
       <nav class="primary-nav">
-        <a href="../index.html" class="nav-link">Home</a>
-        <a href="feed.html" class="nav-link">Stories</a>
-        <a href="tracker.html" class="nav-link">Mood diary</a>
-        <a href="profile.html" class="nav-link">My space</a>
-        <a href="login.html" class="nav-link">Login</a>
+        <!-- Populated dynamically by auth-check.js -->
       </nav>
     </header>
-    <main style="padding: 1.5rem 2rem;">
-      <div class="warm-card" style="margin-bottom: 2rem;">
-        <h2 class="serif-heading" style="margin-bottom: 0.5rem;">share your kathaa</h2>
-        <textarea id="postTextarea" class="post-textarea" rows="3" placeholder="What’s weighing on your heart? write freely..."></textarea>
-        <div class="tag-group" id="tagSelector">
-          <button data-tag="stress" class="mood-tag">😥 Stress</button>
-          <button data-tag="anxiety" class="mood-tag">😰 Anxiety</button>
-          <button data-tag="sadness" class="mood-tag">😢 Sadness</button>
-          <button data-tag="loneliness" class="mood-tag">🕯️ Loneliness</button>
-          <button data-tag="burnout" class="mood-tag">⚡ Burnout</button>
+
+    <main class="feed-page">
+      <div class="feed-inner">
+        <section class="warm-card feed-composer-card">
+          <div class="feed-composer-head">
+            <div class="feed-composer-title-block">
+              <h2 class="feed-composer-title">Naya Kathaa</h2>
+              <p class="feed-composer-title-ne nepali-text" lang="ne">नयाँ कथा</p>
+            </div>
+            <span class="feed-composer-hint">Anonymous · up to 2 tags</span>
+          </div>
+          <textarea id="postTextarea" class="post-textarea" rows="2" placeholder="Your story is safe here. No names, no judgement — speak freely..."></textarea>
+          <div class="tag-group" id="tagSelector">
+            <button type="button" data-tag="harassed" class="mood-tag">Harassed</button>
+            <button type="button" data-tag="silenced" class="mood-tag">Silenced</button>
+            <button type="button" data-tag="blamed" class="mood-tag">Blamed</button>
+            <button type="button" data-tag="domestic" class="mood-tag">Domestic abuse</button>
+            <button type="button" data-tag="assault" class="mood-tag">Assault</button>
+          </div>
+          <div class="feed-composer-actions">
+            <button type="button" id="publishPostBtn" class="btn-primary">Post anonymously</button>
+          </div>
+          <div id="validationArea"></div>
+        </section>
+
+        <div class="feed-filter-bar">
+          <button type="button" data-filter="all" class="filter-chip active">All</button>
+          <button type="button" data-filter="harassed" class="filter-chip">Harassed</button>
+          <button type="button" data-filter="silenced" class="filter-chip">Silenced</button>
+          <button type="button" data-filter="blamed" class="filter-chip">Blamed</button>
+          <button type="button" data-filter="domestic" class="filter-chip">Domestic</button>
+          <button type="button" data-filter="assault" class="filter-chip">Assault</button>
         </div>
-        <button id="publishPostBtn" class="btn-primary" style="margin-top: 0.5rem;">Post anonymously 🪔</button>
-        <div id="validationArea"></div>
-      </div>
 
-      <div class="filter-bar" style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-        <button data-filter="all" class="filter-chip active">All stories</button>
-        <button data-filter="stress" class="filter-chip">Stress</button>
-        <button data-filter="anxiety" class="filter-chip">Anxiety</button>
-        <button data-filter="sadness" class="filter-chip">Sadness</button>
-        <button data-filter="loneliness" class="filter-chip">Loneliness</button>
-        <button data-filter="burnout" class="filter-chip">Burnout</button>
-      </div>
+        <div id="feedContainer" class="feed-stream"></div>
 
-      <div id="feedContainer" class="feed-grid" style="display: flex; flex-direction: column; gap: 1rem;"></div>
-
-      <div class="warm-card" style="margin-top: 2rem;">
-        <h3 class="serif-heading" style="font-size: 1.4rem;">🌿 gentle support</h3>
-        <div id="supportSuggestions" class="support-grid"></div>
+        <section class="warm-card feed-support-section">
+          <h3 class="serif-heading" style="font-size: 1.25rem; margin-bottom: 0.35rem;">Gentle support</h3>
+          <p style="font-size: 0.8rem; color: var(--muted-text); margin-bottom: 0.85rem;">Small reminders when you need them</p>
+          <div id="supportSuggestions" class="support-grid"></div>
+        </section>
       </div>
     </main>
     <footer class="site-footer"><p>a safe harbor for the heart — कथा · every story matters</p></footer>
   </div>
 
-  <script src="../js/auth.js"></script>
-  <script src="../js/posts.js"></script>
+  <script type="module" src="../js/auth-check.js"></script>
   <script type="module">
     import { getPosts, createPost, getAISuggestion } from '../js/api.js';
+    import { getUserId, logout } from '../js/auth.js';
+
+    const navLogout = document.getElementById('navLogout');
+    if (navLogout) {
+      navLogout.addEventListener('click', (e) => {
+        e.preventDefault();
+        logout();
+      });
+    }
+
+    const AVATAR_EMOJIS = ['🪔', '🪷', '🌸', '🕊️', '✨', '🌙', '🌿', '💫', '🏔️', '🌊'];
+    const ADJ = ['Quiet', 'Gentle', 'Brave', 'Soft', 'Warm', 'Kind', 'Calm', 'Silent'];
+    const NOUN = ['River', 'Lotus', 'Light', 'Harbor', 'Star', 'Cloud', 'Bloom', 'Path'];
+
+    function hashString(s) {
+      let h = 0;
+      for (let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+      return h;
+    }
+
+    function displayForAuthor(authorId) {
+      const me = getUserId();
+      let stored = null;
+      try {
+        const raw = localStorage.getItem('kathaa_user');
+        if (raw) stored = JSON.parse(raw);
+      } catch (e) { /* ignore */ }
+      if (stored && authorId && authorId === stored.email) {
+        return {
+          avatar: stored.anon_avatar || '🪔',
+          name: stored.anon_name || 'You',
+          isYou: true
+        };
+      }
+      if (!authorId) {
+        return { avatar: '🪔', name: 'Anonymous', isYou: false };
+      }
+      const h = hashString(String(authorId));
+      const avatar = AVATAR_EMOJIS[Math.abs(h) % AVATAR_EMOJIS.length];
+      const name = `${ADJ[Math.abs(h >> 8) % ADJ.length]} ${NOUN[Math.abs(h >> 16) % NOUN.length]}`;
+      return { avatar, name, isYou: false };
+    }
+
+    function formatPostTime(iso) {
+      try {
+        const d = new Date(iso);
+        const t = Date.now() - d.getTime();
+        const sec = Math.floor(t / 1000);
+        if (sec < 45) return 'Just now';
+        if (sec < 3600) return Math.floor(sec / 60) + 'm';
+        if (sec < 86400) return Math.floor(sec / 3600) + 'h';
+        if (sec < 604800) return Math.floor(sec / 86400) + 'd';
+        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      } catch (e) {
+        return '';
+      }
+    }
 
     let currentFilter = 'all';
     let selectedTags = [];
@@ -117,26 +179,17 @@
       });
     }
 
-    function getEmojiForTags(tags) {
-      if (tags.includes('anxiety')) return '😰';
-      if (tags.includes('stress')) return '😤';
-      if (tags.includes('sadness')) return '😢';
-      if (tags.includes('loneliness')) return '😔';
-      if (tags.includes('burnout')) return '😞';
-      return '🪔';
-    }
-
     async function renderFeed() {
       let posts;
       if (currentFilter === 'all') {
         posts = await getPosts();
       } else {
         const all = await getPosts();
-        posts = all.filter(p => p.tags.includes(currentFilter));
+        posts = all.filter(p => (p.tags || []).includes(currentFilter));
       }
       const container = document.getElementById('feedContainer');
       if (!posts.length) {
-        container.innerHTML = '<div class="warm-card" style="text-align:center;">✨ No stories yet. Be the first to share.</div>';
+        container.innerHTML = '<div class="feed-empty-state">No stories in this view yet. Share yours above — someone else may feel less alone.</div>';
         return;
       }
       const allPosts = await getPosts();
@@ -146,23 +199,60 @@
           const timestamp = new Date(p.timestamp).getTime();
           const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
           if (timestamp < oneWeekAgo) return false;
-          return p.tags.some(tag => post.tags.includes(tag));
+          return (p.tags || []).some(tag => (post.tags || []).includes(tag));
         }).length;
+        const who = displayForAuthor(post.authorId);
+        const youBadge = who.isYou ? '<span class="feed-post-you">You</span>' : '';
+        const tags = (post.tags || []).map(t =>
+          `<span class="feed-post-tag">#${escapeHtml(t)}</span>`
+        ).join('');
+        const postId = String(post.id);
+        let warmthSent = false;
+        try {
+          warmthSent = !!localStorage.getItem('kathaa_warmth_' + postId);
+        } catch (e) { /* ignore */ }
+        const warmthBtn = warmthSent
+          ? '<button type="button" class="feed-warmth-btn sent" disabled aria-label="Warmth already sent">✓ Warmth sent</button>'
+          : `<button type="button" class="feed-warmth-btn" data-post-id="${postId}" aria-label="Send anonymous warmth to this story"><span class="feed-post-action-icon" aria-hidden="true">♡</span> Send warmth</button>`;
         return `
-          <div class="warm-card">
-            <div style="display:flex; gap:1rem; align-items:center; margin-bottom:0.6rem;">
-              <span style="font-size:1.8rem;">${post.moodEmoji || '🪔'}</span>
-              <span style="font-size:0.7rem; color:var(--muted-text);">${new Date(post.timestamp).toLocaleString()}</span>
-            </div>
-            <p style="margin-bottom:0.8rem;">${escapeHtml(post.text)}</p>
-            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.4rem;">
-              ${post.tags.map(t => `<span style="background:rgba(200,169,110,0.1); padding:0.2rem 0.7rem; border-radius:20px; font-size:0.7rem;">#${t}</span>`).join('')}
-            </div>
-            <div class="post-count" style="font-size:0.8rem; color:var(--warm-gold);">❤️ ${similarCount} people feel this way this week</div>
-          </div>
+          <article class="feed-post-card" data-post-id="${postId}">
+            <header class="feed-post-header">
+              <div class="feed-post-avatar" aria-hidden="true">${who.avatar}</div>
+              <div class="feed-post-meta">
+                <div class="feed-post-name">${escapeHtml(who.name)}${youBadge}</div>
+                <span class="feed-post-time">${formatPostTime(post.timestamp)}</span>
+              </div>
+              <span class="feed-post-more" aria-hidden="true">⋯</span>
+            </header>
+            <div class="feed-post-body">${escapeHtml(post.text)}</div>
+            <div class="feed-post-tags">${tags}</div>
+            <div class="feed-post-stats"><strong>${similarCount}</strong> similar hearts this week</div>
+            <div class="feed-post-actions">${warmthBtn}<p class="feed-warmth-hint">Anonymous support · saved on this device only</p></div>
+          </article>
         `;
       }).join('');
     }
+
+    function warmthKey(postId) {
+      return 'kathaa_warmth_' + postId;
+    }
+
+    document.getElementById('feedContainer').addEventListener('click', (e) => {
+      const btn = e.target.closest('.feed-warmth-btn');
+      if (!btn || btn.disabled || btn.classList.contains('sent')) return;
+      const id = btn.getAttribute('data-post-id');
+      if (!id) return;
+      try {
+        if (localStorage.getItem(warmthKey(id))) return;
+        localStorage.setItem(warmthKey(id), '1');
+      } catch (err) {
+        console.warn(err);
+      }
+      btn.classList.add('sent');
+      btn.disabled = true;
+      btn.innerHTML = '✓ Warmth sent';
+      showToast('Your warmth was sent anonymously. Small acts of care still count.', 4500, false);
+    });
 
     function updateTagSelection() {
       document.querySelectorAll('#tagSelector .mood-tag').forEach(btn => {
@@ -174,59 +264,83 @@
 
     function renderSupportSuggestions() {
       const suggestions = [
-        { emoji: "🌬️", title: "Box breathing", desc: "Inhale 4 sec, hold 4, exhale 4 — repeat 5 times." },
-        { emoji: "📖", title: "One line journal", desc: "Write just one honest sentence about today." },
-        { emoji: "💧", title: "Hydrate gently", desc: "Sip warm water with lemon — small ritual of care." },
-        { emoji: "🌙", title: "Sleep ritual", desc: "Dim lights, no screen 30 min before bed." }
+        { title: 'You are believed', desc: 'What happened to you was not your fault. You deserve to be heard.' },
+        { title: 'Grounding breath', desc: 'Inhale 4 sec, hold 4, exhale 4 — repeat 5 times to feel safe in your body.' },
+        { title: 'Nepal helpline', desc: "Women's Rehabilitation Centre (WOREC): 01-4269995. You can call." },
+        { title: 'Be gentle with yourself', desc: 'Healing is not linear. Rest, cry, and come back — all of it is allowed.' }
       ];
       const container = document.getElementById('supportSuggestions');
       container.innerHTML = suggestions.map(s => `
         <div class="support-card">
-          <span class="support-emoji">${s.emoji}</span>
-          <strong style="color:var(--warm-gold);">${s.title}</strong>
-          <p style="font-size:0.8rem; margin-top:0.3rem;">${s.desc}</p>
+          <strong style="color:var(--warm-gold);">${escapeHtml(s.title)}</strong>
+          <p style="font-size:0.8rem; margin-top:0.3rem;">${escapeHtml(s.desc)}</p>
         </div>
       `).join('');
     }
 
     const WAITING_MESSAGES = [
-      "🕯️ Holding your kathaa safely...",
-      "🕯️ Lighting a diya for your courage...",
-      "🕯️ Your story is resting in gentle hands..."
+      'Holding your kathaa safely...',
+      'Your story is being cradled in gentle hands...',
+      'Gathering warmth for your heart...'
     ];
 
     const FALLBACK_VALIDATIONS = [
-      "You are heard. Thank you for sharing your heart with us.",
-      "Even heavy feelings pass — breathe, you are safe here.",
-      "Many hearts echo yours tonight. You’re never alone."
+      'What happened to you was not your fault. You are believed.',
+      'Speaking up takes immense courage. You are not alone in this.',
+      'Your voice matters. The silence ends here, with you.',
+      'You did nothing wrong. The shame belongs to those who hurt you.',
+      'So many women carry this quietly. You sharing helps others feel less alone.',
+      'You are brave. You are worthy of safety, of dignity, of justice.',
+      'Your story matters. You matter. Kathaa holds you with care.',
+      'Healing looks different for everyone. Be gentle with yourself today.'
     ];
 
     function randomFrom(list) {
       return list[Math.floor(Math.random() * list.length)];
     }
 
-    // Toast helper
-    function showToast(message, emoji = "🕯️", duration = 5000) {
-      // Remove existing toast
+    function showToast(message, duration = 5000, hasButton = false) {
       const existing = document.querySelector('.katha-toast');
       if (existing) existing.remove();
 
-      if (!message || message.trim() === '') message = "You are heard. You are not alone.";
+      if (!message || message.trim() === '') message = 'You are heard. You are not alone.';
 
       const toast = document.createElement('div');
       toast.className = 'katha-toast';
+
+      const buttonHTML = hasButton ? `
+        <button type="button" onclick="this.closest('.katha-toast').classList.add('fade-out'); setTimeout(() => this.closest('.katha-toast').remove(), 300);" style="
+          background: var(--warm-gold);
+          color: var(--bg-dark);
+          border: none;
+          padding: 0.4rem 1rem;
+          border-radius: 6px;
+          font-weight: 500;
+          cursor: pointer;
+          font-size: 0.85rem;
+          margin-top: 0.6rem;
+          transition: all 0.2s;
+        " onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">I see you</button>
+      ` : '';
+
       toast.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.6rem;">
-          <span class="toast-emoji">${emoji}</span>
+        <div style="display: flex; align-items: flex-start; gap: 0.6rem; flex-direction: column;">
           <div class="toast-message">${escapeHtml(message)}</div>
+          ${buttonHTML}
         </div>
       `;
       document.body.appendChild(toast);
 
-      setTimeout(() => {
-        toast.classList.add('fade-out');
-        setTimeout(() => toast.remove(), 300);
-      }, duration);
+      if (!hasButton) {
+        setTimeout(() => {
+          if (toast.parentElement) {
+            toast.classList.add('fade-out');
+            setTimeout(() => {
+              if (toast.parentElement) toast.remove();
+            }, 300);
+          }
+        }, duration);
+      }
     }
 
     async function fetchAISuggestionText(text) {
@@ -240,76 +354,60 @@
       }
     }
 
-    // Post button
     const postBtn = document.getElementById('publishPostBtn');
     if (postBtn) {
       postBtn.onclick = async () => {
         const text = document.getElementById('postTextarea').value.trim();
         if (!text) { alert('Please share something from your heart.'); return; }
-        if (selectedTags.length === 0) { alert('Choose a mood tag so your story finds similar souls.'); return; }
+        if (selectedTags.length === 0) { alert('Choose a tag so your story finds similar souls.'); return; }
 
         try {
-          if (!window.kathaaAuth || typeof window.kathaaAuth.getUserId !== 'function') {
-            alert('Authentication error. Please refresh the page.');
+          const userId = getUserId();
+          if (!userId) {
+            alert('Please sign in to post.');
             return;
           }
-          const userId = window.kathaaAuth.getUserId();
 
-          // Immediate feedback so users see a toast even while we save
-          showToast(randomFrom(WAITING_MESSAGES), '🕯️', 5000);
+          showToast(randomFrom(WAITING_MESSAGES), 5000, true);
 
-          // Save post to backend
           const postData = {
             text,
             tags: selectedTags,
-            moodEmoji: getEmojiForTags(selectedTags),
             authorId: userId,
             timestamp: new Date().toISOString()
           };
           await createPost(postData);
 
-          if (window.kathaaPosts && typeof window.kathaaPosts.addNewPost === 'function') {
-            window.kathaaPosts.addNewPost(text, selectedTags, userId);
-          }
-
-          // Clear form and refresh feed
           document.getElementById('postTextarea').value = '';
           selectedTags = [];
           updateTagSelection();
           await renderFeed();
 
-          // Update toast with a placeholder while waiting for AI
-          showToast('✨ Your story is shared. Gathering a gentle thought...', '⏳', 5000);
+          showToast('Your story is shared. Gathering a gentle thought...', 5000, true);
 
-          // Try to get AI suggestion via backend
           let suggestion = await fetchAISuggestionText(text);
           if (!suggestion) {
             suggestion = randomFrom(FALLBACK_VALIDATIONS);
           }
 
-          // Update the toast with the final message
-          showToast(suggestion, "✨", 5000);
+          showToast(suggestion, 5000, true);
 
-          // Also show validation area inside the card
           const valDiv = document.getElementById('validationArea');
           valDiv.innerHTML = `
-            <div class="glow-validate">
-              ✨ Your story has been heard. You are not alone.<br>
-              🕯️ <em>${escapeHtml(suggestion)}</em>
+            <div class="glow-validate" style="margin-top:0.75rem;">
+              Your story has been heard. You are not alone.<br>
+              <em>${escapeHtml(suggestion)}</em>
             </div>
           `;
           setTimeout(() => { valDiv.innerHTML = ''; }, 5000);
         } catch (err) {
           console.error('Error posting story:', err);
-          showToast('⚠️ Could not save your kathaa. Please ensure the support service is running.', '⚠️', 5000);
-          alert('Could not post. Make sure the backend is running at http://localhost:5000');
+          showToast('Could not save your kathaa. Please ensure the support service is running.', 5000);
+          alert('Could not post. Make sure the backend is running (e.g. http://127.0.0.1:5001)');
         }
       };
-    } else {
-      console.error('Post button not found!');
     }
 
-    // Tag selection listeners
     document.querySelectorAll('#tagSelector .mood-tag').forEach(btn => {
       btn.addEventListener('click', () => {
         const tagVal = btn.dataset.tag;
@@ -323,19 +421,18 @@
       });
     });
 
-    // Filter chips
-    document.querySelectorAll('.filter-chip').forEach(chip => {
+    document.querySelectorAll('.feed-filter-bar .filter-chip').forEach(chip => {
       chip.addEventListener('click', async () => {
-        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.feed-filter-bar .filter-chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
         currentFilter = chip.dataset.filter;
         await renderFeed();
       });
     });
 
-    // Initial render
     renderFeed();
     renderSupportSuggestions();
   </script>
+  <script src="../js/didi.js"></script>
 </body>
 </html>

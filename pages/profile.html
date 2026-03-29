@@ -11,67 +11,64 @@
 <body>
   <div class="katha-wrapper">
     <header class="site-header">
-      <div class="logo-area">
-        <span class="diya-icon">🪔</span>
-        <span class="brand-name">Kathaa</span>
-        <span class="brand-sub">कथा</span>
-      </div>
-      <nav class="primary-nav">
-        <a href="../index.html" class="nav-link">Home</a>
-        <a href="feed.html" class="nav-link">Stories</a>
-        <a href="tracker.html" class="nav-link">Mood diary</a>
-        <a href="profile.html" class="nav-link">My space</a>
-        <a href="login.html" class="nav-link">Login</a>
-      </nav>
-    </header>
+    <div class="logo-area">
+      <span class="diya-icon">🪔</span>
+      <span class="brand-name">Kathaa</span>
+      <span class="brand-sub">कथा</span>
+    </div>
+    <nav class="primary-nav">
+      <!-- Populated dynamically by auth-check.js -->
+    </nav>
+  </header>
 
-    <main style="padding: 2rem; max-width: 900px; margin: 0 auto;">
-      <!-- Anonymous identity card -->
-      <div class="warm-card" style="text-align: center; margin-bottom: 2rem;">
-        <span style="font-size: 4rem;">🪔</span>
-        <h2 class="serif-heading">anonymous soul</h2>
-        <p id="userIdDisplay" style="color:var(--warm-gold); font-size:0.85rem; margin: 0.5rem 0 1rem;"></p>
-        <div style="display: flex; justify-content: center; gap: 2rem; margin: 1rem 0;">
-          <div>
-            <strong style="color: var(--cream-heading);">✨ Stories shared</strong><br>
-            <span id="postCount" style="font-size: 2rem; color: var(--warm-gold);">0</span>
+    <main style="padding: 2rem 1.5rem; max-width: 1000px; margin: 0 auto;">
+      <!-- Storyteller Stats (Only visible in Storyteller mode) -->
+      <div id="storyteller-stats">
+        <!-- Anonymous identity card -->
+        <div class="warm-card" style="text-align: center; margin-bottom: 2rem;">
+          <span style="font-size: 4rem;">🪔</span>
+          <h2 class="serif-heading">anonymous soul</h2>
+          <p id="userIdDisplay" style="color:var(--warm-gold); font-size:0.85rem; margin: 0.5rem 0 1rem;"></p>
+          <div style="display: flex; justify-content: center; gap: 2rem; margin: 1rem 0;">
+            <div>
+              <strong style="color: var(--cream-heading);">✨ Stories shared</strong><br>
+              <span id="postCount" style="font-size: 2rem; color: var(--warm-gold);">0</span>
+            </div>
+            <div>
+              <strong style="color: var(--cream-heading);">🌱 Mood entries</strong><br>
+              <span id="moodCount" style="font-size: 2rem; color: var(--warm-gold);">0</span>
+            </div>
           </div>
-          <div>
-            <strong style="color: var(--cream-heading);">🌱 Mood entries</strong><br>
-            <span id="moodCount" style="font-size: 2rem; color: var(--warm-gold);">0</span>
+          <div class="glow-validate" style="margin-top: 1.5rem;">
+            “Every feeling you log is a step toward clarity. You belong here.”
+          </div>
+          <div style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--muted-text);">
+            ⚡ Your identity stays completely anonymous. Only you can see this page.
           </div>
         </div>
-        <div class="glow-validate" style="margin-top: 1.5rem;">
-          “Every feeling you log is a step toward clarity. You belong here.”
-        </div>
-        <div style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--muted-text);">
-          ⚡ Your identity stays completely anonymous. Only you can see this page.
+
+        <!-- Recent Stories -->
+        <div class="warm-card" style="margin-bottom: 2rem;">
+          <h3 class="serif-heading" style="margin-bottom: 0.5rem;">📖 Your recent stories</h3>
+          <p style="font-size: 0.85rem; color: var(--muted-text); margin-bottom: 1rem;">The last 5 stories you've shared</p>
+          <div id="userPostsList" style="display: flex; flex-direction: column; gap: 0.8rem;">
+            <div style="text-align: center; color: var(--muted-text);">Loading...</div>
+          </div>
+          <div style="text-align: center; margin-top: 1rem;">
+            <a href="feed.html" class="btn-outline" style="font-size: 0.8rem;">✍️ Share another story →</a>
+          </div>
         </div>
       </div>
 
-      <!-- Recent Stories -->
-      <div class="warm-card" style="margin-bottom: 2rem;">
-        <h3 class="serif-heading" style="margin-bottom: 0.5rem;">📖 Your recent stories</h3>
-        <p style="font-size: 0.85rem; color: var(--muted-text); margin-bottom: 1rem;">The last 5 stories you've shared</p>
-        <div id="userPostsList" style="display: flex; flex-direction: column; gap: 0.8rem;">
-          <div style="text-align: center; color: var(--muted-text);">Loading...</div>
-        </div>
-        <div style="text-align: center; margin-top: 1rem;">
-          <a href="feed.html" class="btn-outline" style="font-size: 0.8rem;">✍️ Share another story →</a>
+      <!-- Mentor Section -->
+      <div id="mentor-section" class="warm-card" style="margin-bottom: 2rem; border-color: var(--warm-gold);">
+        <h3 class="serif-heading" style="margin-bottom: 0.5rem;">🎓 Support as a Mentor</h3>
+        <p style="font-size: 0.85rem; color: var(--muted-text); margin-bottom: 1.2rem;">Share your expertise and hold space for others.</p>
+        <div style="text-align: center; padding: 2rem;">
+          <a href="mentor-portal.html" class="btn-primary">Visit Mentor Portal</a>
         </div>
       </div>
 
-      <!-- Recent Mood Entries -->
-      <div class="warm-card">
-        <h3 class="serif-heading" style="margin-bottom: 0.5rem;">🌼 Recent mood entries</h3>
-        <p style="font-size: 0.85rem; color: var(--muted-text); margin-bottom: 1rem;">Your last 5 mood check‑ins</p>
-        <div id="userMoodList" style="display: flex; flex-direction: column; gap: 0.8rem;">
-          <div style="text-align: center; color: var(--muted-text);">Loading...</div>
-        </div>
-        <div style="text-align: center; margin-top: 1rem;">
-          <a href="tracker.html" class="btn-outline" style="font-size: 0.8rem;">🌿 Log today's mood →</a>
-        </div>
-      </div>
     </main>
 
     <footer class="site-footer">
@@ -79,86 +76,9 @@
     </footer>
   </div>
 
-<script src="../js/auth.js"></script>
+<script type="module" src="../js/auth-check.js"></script>
 <script src="../js/posts.js"></script>
 <script src="../js/moodTracker.js"></script>
-<script>
-  // Helper to escape HTML
-  function escapeHtml(str) {
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
-  }
-
-  function formatTime(timestamp) {
-    return new Date(timestamp).toLocaleString();
-  }
-
-  const userId = window.kathaaAuth.getUserId();
-  document.getElementById('userIdDisplay').innerText = `Your Kathaa ID · ${userId.slice(0,12)}...`;
-
-  function updatePostsSection() {
-    const userPosts = window.kathaaPosts.getUserPosts(userId);
-    document.getElementById('postCount').innerText = userPosts.length;
-
-    const recentPosts = userPosts.slice(0, 5);
-    const container = document.getElementById('userPostsList');
-    if (recentPosts.length === 0) {
-      container.innerHTML = '<div style="text-align: center; color: var(--muted-text);">✨ You haven’t shared any stories yet. Be the first.</div>';
-      return;
-    }
-    container.innerHTML = recentPosts.map(post => `
-      <div style="border-bottom: 1px solid var(--border-soft); padding-bottom: 0.8rem;">
-        <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem;">
-          <span style="font-size: 1.4rem;">${post.moodEmoji || '🪔'}</span>
-          <span style="font-size: 0.7rem; color: var(--muted-text);">${formatTime(post.timestamp)}</span>
-        </div>
-        <p style="font-size: 0.9rem; margin-bottom: 0.3rem;">${escapeHtml(post.text)}</p>
-        <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
-          ${post.tags.map(t => `<span style="background:rgba(200,169,110,0.1); padding:0.2rem 0.6rem; border-radius:20px; font-size:0.7rem;">#${t}</span>`).join('')}
-        </div>
-      </div>
-    `).join('');
-  }
-
-  function updateMoodSection() {
-    const userMoods = window.kathaaMood.getUserMoods(userId);
-    document.getElementById('moodCount').innerText = userMoods.length;
-
-    const recentMoods = [...userMoods].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0,5);
-    const container = document.getElementById('userMoodList');
-    if (recentMoods.length === 0) {
-      container.innerHTML = '<div style="text-align: center; color: var(--muted-text);">🌱 No mood entries yet. Start tracking.</div>';
-      return;
-    }
-    container.innerHTML = recentMoods.map(entry => `
-      <div style="border-bottom: 1px solid var(--border-soft); padding-bottom: 0.6rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span><span style="font-size: 1.2rem;">${entry.mood}</span> <strong style="color: var(--cream-heading);">${entry.mood}</strong></span>
-          <span style="font-size: 0.7rem; color: var(--muted-text);">${entry.date}</span>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  updatePostsSection();
-  updateMoodSection();
-
-  // Listen for changes (if data updated in another tab)
-  window.addEventListener('storage', function(e) {
-    if (e.key === 'kathaa_posts') updatePostsSection();
-    if (e.key === 'kathaa_mood_logs') updateMoodSection();
-  });
-
-  document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-      updatePostsSection();
-      updateMoodSection();
-    }
-  });
-</script>
+<script type="module" src="../js/profile-init.js"></script>
 </body>
 </html>

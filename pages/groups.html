@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Groups — Kathaa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <div class="katha-wrapper">
+    <header class="site-header">
+    <div class="logo-area">
+      <span class="diya-icon">🪔</span>
+      <span class="brand-name">Kathaa</span>
+      <span class="brand-sub">कथा</span>
+    </div>
+    <nav class="primary-nav">
+      <!-- Populated dynamically by auth-check.js -->
+    </nav>
+  </header>
+
+    <main class="groups-container">
+      <div id="groupListView">
+        <span class="section-label">Community Circles</span>
+        <h1 class="hero-title" style="font-size: 3.2rem; margin-bottom: 0.5rem;">Safe Spaces & <br>Communities</h1>
+        <p class="hero-tagline" style="margin-bottom: 3rem;">Find a circle that understands. Join a group based on shared experiences or moderated by professionals.</p>
+        <div id="groupsList"></div>
+      </div>
+
+      <div id="groupDetailView" style="display: none;">
+        <button onclick="showGroupList()" class="btn-outline" style="margin-bottom: 1rem;">← Back to groups</button>
+        <div id="groupDetailHeader"></div>
+        
+        <div class="chautari-tabs">
+          <button class="tab-btn active" onclick="switchTab('chautari')">Chautari 🎙️</button>
+          <button class="tab-btn" onclick="switchTab('sessions')">Mentor Sessions</button>
+        </div>
+
+        <section id="tab-chautari" class="chautari-section active">
+          <div class="room-grid" id="activeRooms"></div>
+        </section>
+
+        <section id="tab-sessions" class="chautari-section">
+          <div id="mentorSessionsList"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Daily.co Library -->
+    <script src="https://unpkg.com/@daily-co/daily-js"></script>
+    <script type="module" src="../js/auth-check.js"></script>
+    <script type="module">
+        import { logout } from '../js/auth.js';
+        const navLogout = document.getElementById('navLogout');
+        if (navLogout) {
+            navLogout.addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+        }
+    </script>
+    <script type="module" src="../js/groups.js?v=3"></script>
+  </div>
+</body>
+</html>

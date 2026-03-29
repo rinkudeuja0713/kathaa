@@ -59,11 +59,51 @@ node_modules/
 # Output of 'npm pack'
 *.tgz
 
-# Yarn Integrity file
-.yarn-integrity
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
-# dotenv environment variables file
+# Python
+venv/
+.venv/
+venv-*/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.hypothesis/
+.pytest_cache/
+*.swp
+*.swo
+
+# Environment variables
 .env
+*.env
+
+# OS
+.DS_Store
+
+# node_modules
+node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
 
 # dataconnect generated files
 .dataconnect
