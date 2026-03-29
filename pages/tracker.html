@@ -11,14 +11,21 @@
 </head>
 <body>
   <div class="katha-wrapper">
-    <header class="site-header"><div class="logo-area"><span class="diya-icon">🪔</span><span class="brand-name">Kathaa</span><span class="brand-sub">कथा</span></div>
-  <nav class="primary-nav"><a href="../index.html" class="nav-link">Home</a><a href="feed.html" class="nav-link">Stories</a><a href="tracker.html" class="nav-link">Mood diary</a><a href="professionals.html" class="nav-link nav-link-support">Get support</a><a href="profile.html" class="nav-link">My space</a><a href="login.html" class="nav-link">Login</a></nav></header>
+    <header class="site-header">
+    <div class="logo-area">
+      <span class="diya-icon">🪔</span>
+      <span class="brand-name">Kathaa</span>
+      <span class="brand-sub">कथा</span>
+    </div>
+    <nav class="primary-nav">
+      <!-- Populated dynamically by auth-check.js -->
+    </nav>
+  </header>
     <main style="padding: 2rem;">
       <div class="warm-card">
         <h2 class="serif-heading">🌱 How are you feeling today?</h2>
         <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0;">
           <button data-mood="😊 Good" data-score="5" class="mood-btn">😊 Good</button>
-          <button data-mood="� Okay" data-score="4" class="mood-btn">� Okay</button>
           <button data-mood="� Low" data-score="2" class="mood-btn">� Low</button>
           <button data-mood="😰 Anxious" data-score="3" class="mood-btn">😰 Anxious</button>
           <button data-mood="� Stressed" data-score="3" class="mood-btn">� Stressed</button>
@@ -36,7 +43,7 @@
     </main>
     <footer class="site-footer"><p>कथा — your inner weather matters</p></footer>
   </div>
-  <script src="../js/auth.js"></script>
+  <script type="module" src="../js/auth-check.js"></script>
   <script src="../js/moodTracker.js"></script>
   <script>
     let moodChart = null;

@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kathaa — Create Account</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/responsive.css">
   <style>
@@ -126,6 +129,7 @@
       from {
         opacity: 0;
       }
+
       to {
         opacity: 1;
       }
@@ -323,6 +327,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="signup-container">
     <!-- Left Section: Branding -->
@@ -331,100 +336,34 @@
       <div class="subtitle">Kathaa</div>
       <p>Share your stories anonymously. Connect with others who understand.</p>
       <p>Your voice matters. Your identity is safe with us.</p>
-      <p style="margin-top: 30px; font-size: 14px; font-style: italic;">Join thousands of users sharing their stories safely and anonymously.</p>
+      <p style="margin-top: 30px; font-size: 14px; font-style: italic;">Join thousands of users sharing their stories
+        safely and anonymously.</p>
     </div>
 
     <!-- Right Section: Signup Form -->
     <div class="signup-right">
       <div class="signup-form-title">Create Account</div>
-      <div class="signup-form-subtitle">Join Kathaa today</div>
+      <div class="signup-form-subtitle">Join Kathaa today — as a storyteller</div>
+      <p style="font-size: 12px; color: var(--muted-text); text-align: center; margin-bottom: 20px; line-height: 1.5;">
+        Want to support others as a mentor? You can apply later from <a href="profile.html" style="color: var(--warm-gold); font-weight: 600;">My Space</a>.
+      </p>
 
-      <!-- Signup Method Tabs -->
-      <div class="signup-tabs">
-        <button type="button" class="signup-tab-btn active" id="emailTabBtn">Email Sign Up</button>
-        <button type="button" class="signup-tab-btn" id="phoneTabBtn">Phone Sign Up</button>
-      </div>
-
-      <!-- Email Signup Form -->
       <form id="emailSignupForm" class="auth-form active">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="firstName">First Name</label>
-            <input type="text" id="firstName" placeholder="First name">
-          </div>
-          <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" placeholder="Last name">
-          </div>
-        </div>
-
         <div class="form-group">
           <label for="email">Email Address</label>
-          <input type="email" id="email" placeholder="you@example.com">
+          <input type="email" id="email" placeholder="you@example.com" required>
         </div>
 
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Create a strong password">
+          <input type="password" id="password" placeholder="Create a strong password" required>
         </div>
 
-        <div class="form-group">
-          <label for="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" placeholder="Confirm your password">
-        </div>
+        <p class="terms-text">By clicking Sign Up, you agree to our Terms of Service and Privacy Policy. Your identity
+          is always safe.</p>
 
-        <p class="terms-text">By clicking Sign Up, you agree to our Terms of Service and Privacy Policy. We'll never share your identity.</p>
-
-        <button type="submit" class="signup-btn">Sign Up with Email</button>
+        <button type="submit" class="signup-btn">Create Account</button>
       </form>
-
-      <!-- Phone Signup Form -->
-      <form id="phoneSignupForm" class="auth-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="phoneFirstName">First Name</label>
-            <input type="text" id="phoneFirstName" placeholder="First name">
-          </div>
-          <div class="form-group">
-            <label for="phoneLastName">Last Name</label>
-            <input type="text" id="phoneLastName" placeholder="Last name">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="phone">Phone Number</label>
-          <input type="tel" id="phone" placeholder="+1 (555) 123-4567">
-          <small style="display: block; margin-top: 4px; color: var(--muted-text);">Include country code (e.g., +1, +91)</small>
-        </div>
-
-        <button type="button" id="sendPhoneOtpBtn" class="signup-btn">Send OTP</button>
-
-        <!-- OTP Verification Section -->
-        <div id="phoneOtpSection" style="display: none;">
-          <div class="form-group">
-            <label for="phoneOtp">Enter OTP Code</label>
-            <input type="text" id="phoneOtp" placeholder="000000" maxlength="6">
-            <small style="display: block; margin-top: 4px; color: var(--muted-text);">6-digit code sent to your phone</small>
-          </div>
-          <button type="button" id="verifyPhoneOtpBtn" class="signup-btn">Verify & Sign Up</button>
-        </div>
-
-        <p class="terms-text">By signing up, you agree to our Terms of Service and Privacy Policy. We'll never share your identity.</p>
-      </form>
-
-      <div class="divider">
-        <span class="divider-text">OR</span>
-      </div>
-
-      <button id="googleSignUpBtn" class="google-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-        </svg>
-        Sign up with Google
-      </button>
 
       <div id="message" class="message"></div>
 
@@ -435,11 +374,10 @@
   </div>
 
   <script type="module">
-    // Import Firebase SDKs
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { persistUser } from '../js/auth.js';
 
-    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBO2bzjwUo52rYAtAxqA04i3F_a_IDQejE",
       authDomain: "kathaa-385a3.firebaseapp.com",
@@ -450,55 +388,15 @@
       measurementId: "G-TFZG6F1VZR"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    auth.settings.appVerificationDisabledForTesting = false;
     const googleProvider = new GoogleAuthProvider();
 
-    // DOM elements
-    const emailTabBtn = document.getElementById('emailTabBtn');
-    const phoneTabBtn = document.getElementById('phoneTabBtn');
     const emailSignupForm = document.getElementById('emailSignupForm');
-    const phoneSignupForm = document.getElementById('phoneSignupForm');
-    const firstNameInput = document.getElementById('firstName');
-    const lastNameInput = document.getElementById('lastName');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('confirmPassword');
-    const phoneFirstNameInput = document.getElementById('phoneFirstName');
-    const phoneLastNameInput = document.getElementById('phoneLastName');
-    const phoneInput = document.getElementById('phone');
-    const phoneOtpInput = document.getElementById('phoneOtp');
-    const phoneOtpSection = document.getElementById('phoneOtpSection');
-    const sendPhoneOtpBtn = document.getElementById('sendPhoneOtpBtn');
-    const verifyPhoneOtpBtn = document.getElementById('verifyPhoneOtpBtn');
     const messageDiv = document.getElementById('message');
-    const googleBtn = document.getElementById('googleSignUpBtn');
 
-    let recaptchaVerifier = null;
-    let confirmationResult = null;
-
-    // Anonymous username generator (Reddit-style)
-    const anonymousAdjectives = ['Silent', 'Calm', 'Gentle', 'Brave', 'Wise', 'True', 'Pure', 'Free', 'Bright', 'Warm', 'Deep', 'Clear', 'Still', 'Swift', 'Strong', 'Humble', 'Noble', 'Kind'];
-    const anonymousNouns = ['Diya', 'Flame', 'Echo', 'River', 'Mountain', 'Stone', 'Wind', 'Star', 'Moon', 'Sun', 'Tree', 'Soul', 'Heart', 'Light', 'Path', 'Voice', 'Seed', 'Breath'];
-
-    function generateAnonymousUsername() {
-      const adjective = anonymousAdjectives[Math.floor(Math.random() * anonymousAdjectives.length)];
-      const noun = anonymousNouns[Math.floor(Math.random() * anonymousNouns.length)];
-      const number = Math.floor(Math.random() * 1000);
-      return `${adjective}${noun}${number}`;
-    }
-
-    function saveAnonymousUsername(username) {
-      localStorage.setItem('kathaa_anonymous_username', username);
-    }
-
-    function getAnonymousUsername() {
-      return localStorage.getItem('kathaa_anonymous_username');
-    }
-
-    // Helper to display messages
     function showMessage(text, isError = true) {
       messageDiv.classList.add('show');
       messageDiv.classList.toggle('error', isError);
@@ -506,201 +404,29 @@
       messageDiv.innerText = text;
     }
 
-    // Tab switching
-    function switchTab(tab) {
-      if (tab === 'email') {
-        emailTabBtn.classList.add('active');
-        phoneTabBtn.classList.remove('active');
-        emailSignupForm.classList.add('active');
-        phoneSignupForm.classList.remove('active');
-      } else if (tab === 'phone') {
-        phoneTabBtn.classList.add('active');
-        emailTabBtn.classList.remove('active');
-        phoneSignupForm.classList.add('active');
-        emailSignupForm.classList.remove('active');
-      }
-      messageDiv.classList.remove('show');
-    }
-
-    emailTabBtn.addEventListener('click', () => switchTab('email'));
-    phoneTabBtn.addEventListener('click', () => switchTab('phone'));
-
-    // Phone number formatting - keep + and digits only
-    phoneInput.addEventListener('input', (e) => {
-      let value = e.target.value;
-      // If it doesn't start with +, add it
-      if (value && !value.startsWith('+')) {
-        value = '+' + value;
-      }
-      // Keep only + and digits, limit to 15 characters total
-      value = value.replace(/[^\d+]/g, '').slice(0, 15);
-      e.target.value = value;
-    });
-
-    // OTP input formatting
-    phoneOtpInput.addEventListener('input', (e) => {
-      e.target.value = e.target.value.replaceAll(/\D/g, '').slice(0, 6);
-    });
-
-    // Initialize reCAPTCHA
-    function initRecaptcha() {
-      if (!recaptchaVerifier) {
-        recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-          size: 'invisible'
-        });
-      }
-      return recaptchaVerifier;
-    }
-
-    // Email signup
-    emailSignupForm.addEventListener('submit', (e) => {
+    emailSignupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const firstName = firstNameInput.value.trim();
-      const lastName = lastNameInput.value.trim();
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
-      const confirmPassword = confirmPasswordInput.value.trim();
-
-      if (!firstName || !lastName) {
-        showMessage('Please enter your name.', true);
+      if (!email || !password) {
+        showMessage('Please enter both email and password.', true);
         return;
       }
-
-      if (!email) {
-        showMessage('Please enter a valid email.', true);
-        return;
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        persistUser(cred.user);
+        showMessage('Account created! Taking you to stories...', false);
+        setTimeout(() => { window.location.href = 'feed.html'; }, 1400);
+      } catch (err) {
+        const msgs = {
+          'auth/email-already-in-use': 'An account already exists with this email.',
+          'auth/weak-password': 'Password must be at least 6 characters.',
+          'auth/invalid-email': 'Please enter a valid email address.'
+        };
+        showMessage(msgs[err.code] || err.message, true);
       }
-
-      if (password.length < 6) {
-        showMessage('Password must be at least 6 characters.', true);
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        showMessage('Passwords do not match.', true);
-        return;
-      }
-
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          const anonUsername = generateAnonymousUsername();
-          saveAnonymousUsername(anonUsername);
-          return updateProfile(user, {
-            displayName: anonUsername
-          }).then(() => user);
-        })
-        .then(() => {
-          showMessage('Account created successfully! Redirecting...', false);
-          setTimeout(() => {
-            globalThis.location.href = '../index.html';
-          }, 1500);
-        })
-        .catch((error) => {
-          let errorMessage = '';
-          switch (error.code) {
-            case 'auth/email-already-in-use':
-              errorMessage = 'Email already in use. Please sign in or use a different email.';
-              break;
-            case 'auth/invalid-email':
-              errorMessage = 'Invalid email address.';
-              break;
-            case 'auth/weak-password':
-              errorMessage = 'Password is too weak. Use at least 6 characters.';
-              break;
-            case 'auth/operation-not-allowed':
-              errorMessage = 'Email/password signup is currently disabled. Please use Google signup instead.';
-              break;
-            default:
-              errorMessage = 'Sign-up failed. Please try again.';
-          }
-          showMessage(errorMessage, true);
-        });
-    });
-
-    // Send Phone OTP
-    sendPhoneOtpBtn.addEventListener('click', async () => {
-      let phone = phoneInput.value.trim();
-
-      if (!phone) {
-        showMessage('Please enter your phone number.', true);
-        return;
-      }
-
-      // Ensure phone starts with +
-      if (!phone.startsWith('+')) {
-        phone = '+' + phone;
-      }
-
-      // Validate format: + followed by country code and digits (minimum 10 digits after +)
-      if (!/^\+\d{1,3}\d{6,14}$/.test(phone)) {
-        showMessage('Please enter a valid phone number with country code (e.g., +1234567890 or +917987654321).', true);
-        return;
-      }
-
-      sendPhoneOtpBtn.disabled = true;
-      sendPhoneOtpBtn.innerText = 'Sending...';
-
-      // Show OTP sent message manually
-      phoneOtpSection.style.display = 'block';
-      showMessage('OTP sent manually to your phone!', false);
-      sendPhoneOtpBtn.innerText = 'OTP Sent';
-    });
-
-    // Verify Phone OTP and create account
-    verifyPhoneOtpBtn.addEventListener('click', async () => {
-      const otp = phoneOtpInput.value.trim();
-      const firstName = phoneFirstNameInput.value.trim();
-      const lastName = phoneLastNameInput.value.trim();
-
-      if (!firstName || !lastName) {
-        showMessage('Please enter your name.', true);
-        return;
-      }
-
-      if (!otp || otp.length !== 6) {
-        showMessage('Please enter a valid 6-digit OTP.', true);
-        return;
-      }
-
-      verifyPhoneOtpBtn.disabled = true;
-      verifyPhoneOtpBtn.innerText = 'Verifying...';
-
-      // Accept any valid 6-digit OTP for manual verification
-      const anonUsername = generateAnonymousUsername();
-      saveAnonymousUsername(anonUsername);
-      showMessage('Phone verified! Account created successfully! Redirecting...', false);
-      setTimeout(() => {
-        globalThis.location.href = '../index.html';
-      }, 1500);
-    });
-
-    // Google Sign-Up
-    googleBtn.addEventListener('click', () => {
-      signInWithPopup(auth, googleProvider)
-        .then(() => {
-          const anonUsername = generateAnonymousUsername();
-          saveAnonymousUsername(anonUsername);
-          showMessage('Account created successfully! Redirecting...', false);
-          setTimeout(() => {
-            globalThis.location.href = '../index.html';
-          }, 1500);
-        })
-        .catch((error) => {
-          let errorMessage = '';
-          if (error.code === 'auth/popup-blocked') {
-            errorMessage = 'Popup was blocked. Please allow popups for this site.';
-          } else if (error.code === 'auth/cancelled-popup-request') {
-            errorMessage = 'Sign-up cancelled.';
-          } else {
-            errorMessage = 'Google sign-up failed. Please try again.';
-          }
-          showMessage(errorMessage, true);
-        });
     });
   </script>
-
-  <!-- reCAPTCHA Container -->
-  <div id="recaptcha-container"></div>
 </body>
+
 </html>

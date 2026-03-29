@@ -1,87 +1,106 @@
-(function() {
-  const ANON_ID_KEY = 'kathaa_anonymous_id';
-  const USER_EMAIL_KEY = 'kathaa.user.email';
-  const LOGGED_IN_KEY = 'kathaa.user.loggedIn';
-  const API_BASE = 'http://127.0.0.1:5000/api/auth';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-  function getOrCreateAnonId() {
-    let id = localStorage.getItem(ANON_ID_KEY);
-    if (!id) {
-      id = 'anon_' + Math.random().toString(36).substring(2, 12) + Date.now().toString(36);
-      localStorage.setItem(ANON_ID_KEY, id);
-    }
-    return id;
-  }
+const firebaseConfig = {
+  apiKey: "AIzaSyBO2bzjwUo52rYAtAxqA04i3F_a_IDQejE",
+  authDomain: "kathaa-385a3.firebaseapp.com",
+  projectId: "kathaa-385a3",
+  storageBucket: "kathaa-385a3.firebasestorage.app",
+  messagingSenderId: "52566990780",
+  appId: "1:52566990780:web:e64147c95474885acbd5b9",
+  measurementId: "G-TFZG6F1VZR"
+};
 
-  async function signup(email, password, role = 'storyteller', mentor_profile = null) {
-    try {
-      const res = await fetch(`${API_BASE}/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, role, mentor_profile })
-      });
-      return await res.json();
-    } catch (e) {
-      return { success: false, message: 'Server error: ' + e.message };
-    }
-  }
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-  async function login(email, password) {
-    try {
-      const res = await fetch(`${API_BASE}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (data.success) {
-        localStorage.setItem(USER_EMAIL_KEY, email);
-        localStorage.setItem(LOGGED_IN_KEY, 'true');
-      }
-      return data;
-    } catch (e) {
-      return { success: false, message: 'Server error: ' + e.message };
-    }
-  }
+export const AUTH_USER_KEY = 'kathaa_user';
 
-  async function getProfile() {
-    const email = localStorage.getItem(USER_EMAIL_KEY);
-    if (!email) return null;
-    try {
-      const res = await fetch(`${API_BASE}/profile?email=${email}`);
-      if (res.ok) return await res.json();
-    } catch (e) { console.warn('Profile fetch failed:', e); }
-    return null;
-  }
+const ANON_AVATARS = ['🪔', '🪷', '🌸', '🕊️', '✨', '🌙', '🌿', '💫', '🏔️', '🌊'];
+const ADJ = ['Quiet', 'Gentle', 'Brave', 'Soft', 'Warm', 'Kind', 'Calm', 'Silent'];
+const NOUN = ['River', 'Lotus', 'Light', 'Harbor', 'Star', 'Cloud', 'Bloom', 'Path'];
 
-  async function switchPersona(persona) {
-    const email = localStorage.getItem(USER_EMAIL_KEY);
-    try {
-      const res = await fetch(`${API_BASE}/switch-persona`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, persona })
-      });
-      return await res.json();
-    } catch (e) { return { success: false, message: e.message }; }
-  }
+function hashString(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+  return Math.abs(h);
+}
 
-  function logout() {
-    localStorage.removeItem(USER_EMAIL_KEY);
-    localStorage.removeItem(LOGGED_IN_KEY);
-  }
-
-  function isLoggedIn() {
-    return localStorage.getItem(LOGGED_IN_KEY) === 'true';
-  }
-
-  window.kathaaAuth = {
-    getUserId: getOrCreateAnonId,
-    signup,
-    login,
-    logout,
-    isLoggedIn,
-    getProfile,
-    switchPersona
+function generateAnonIdentity(uid) {
+  const h = hashString(uid);
+  return {
+    anon_avatar: ANON_AVATARS[h % ANON_AVATARS.length],
+    anon_name: `${ADJ[(h >> 4) % ADJ.length]} ${NOUN[(h >> 8) % NOUN.length]}`
   };
-})();
+}
+
+/** Call after Firebase login to persist user metadata in localStorage */
+export function persistUser(firebaseUser, extraData = {}) {
+  const existing = getStoredUser() || {};
+  const identity = generateAnonIdentity(firebaseUser.uid);
+  const user = {
+    uid: firebaseUser.uid,
+    email: firebaseUser.email,
+    anon_avatar: existing.anon_avatar || identity.anon_avatar,
+    anon_name: existing.anon_name || identity.anon_name,
+    role: existing.role || 'storyteller',
+    is_verified: existing.is_verified || false,
+    active_persona: existing.active_persona || 'storyteller',
+    ...extraData
+  };
+  localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+  return user;
+}
+
+export function getStoredUser() {
+  try {
+    const raw = localStorage.getItem(AUTH_USER_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+export function getUserId() {
+  const user = getStoredUser();
+  return user ? user.uid : null;
+}
+
+export function getUserRole() {
+  const user = getStoredUser();
+  return user ? user.role : 'storyteller';
+}
+
+export function isVerified() {
+  const user = getStoredUser();
+  return user ? user.is_verified : false;
+}
+
+export function getActivePersona() {
+  const user = getStoredUser();
+  return user ? user.active_persona : 'storyteller';
+}
+
+export function setActivePersona(persona) {
+  const user = getStoredUser();
+  if (user) {
+    user.active_persona = persona;
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+  }
+}
+
+export function isLoggedIn() {
+  return !!auth.currentUser && !!getStoredUser();
+}
+
+export function logout() {
+  localStorage.removeItem(AUTH_USER_KEY);
+  signOut(auth).finally(() => {
+    const inPages = (window.location.pathname || '').includes('/pages/');
+    window.location.replace(inPages ? '../home.html' : 'home.html');
+  });
+}
+
+export function onAuthReady(callback) {
+  return onAuthStateChanged(auth, callback);
+}
+
+export { auth };

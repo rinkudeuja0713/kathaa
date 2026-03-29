@@ -34,5 +34,32 @@
       "cert_link": "https://linkedin.com/in/aradhana",
       "bio": "I specialize in South Asian mental health and anxiety management. I have 10 years of experience supporting immigrant families."
     }
+  },
+  "dangolree@gmail.com": {
+    "password": "abc123",
+    "role": "mentor",
+    "is_verified": false,
+    "active_persona": "mentor",
+    "mentor_profile": null,
+    "anon_name": "Brave Cloud",
+    "anon_avatar": "\u2601\ufe0f"
+  },
+  "dangol32@gmail.com": {
+    "password": "abc123",
+    "role": "storyteller",
+    "is_verified": false,
+    "active_persona": "storyteller",
+    "mentor_profile": null,
+    "anon_name": "Golden Lotus",
+    "anon_avatar": "\u2601\ufe0f"
+  },
+  "hello@example.com": {
+    "password": "helloexample",
+    "role": "storyteller",
+    "is_verified": false,
+    "active_persona": "storyteller",
+    "mentor_profile": null,
+    "anon_name": "Glowing Diya",
+    "anon_avatar": "\ud83e\udeb7"
   }
 }

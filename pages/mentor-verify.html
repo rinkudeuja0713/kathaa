@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kathaa — Mentor Verification</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a1714 0%, #2d251f 100%);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      color: var(--body-text);
+    }
+
+    .verify-container {
+      max-width: 800px;
+      margin: 100px auto;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(212, 129, 58, 0.1);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    .verify-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .verify-header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      color: var(--warm-gold);
+      margin-bottom: 10px;
+    }
+
+    .verify-header p {
+      color: var(--muted-text);
+      font-size: 16px;
+    }
+
+    .verify-step {
+      background: rgba(14, 11, 8, 0.4);
+      padding: 30px;
+      border-radius: 16px;
+      border: 1px solid rgba(212, 129, 58, 0.05);
+      margin-bottom: 24px;
+    }
+
+    .verify-step h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #d4a373;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted-text);
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px;
+      background: rgba(14, 11, 8, 0.6);
+      border: 1px solid rgba(212, 129, 58, 0.2);
+      border-radius: 10px;
+      color: white;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      height: 120px;
+      resize: vertical;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--warm-gold) 0%, #c8a96e 100%);
+      border: none;
+      border-radius: 12px;
+      color: #1a1714;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(212, 129, 58, 0.3);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-top: 10px;
+    }
+
+    .status-pending {
+      background: rgba(212, 129, 58, 0.2);
+      color: var(--warm-gold);
+      border: 1px solid var(--warm-gold);
+    }
+
+    .status-verified {
+      background: rgba(50, 150, 100, 0.2);
+      color: #51cf66;
+      border: 1px solid #51cf66;
+    }
+
+    .ai-feedback {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .ai-feedback.show {
+      display: block;
+    }
+
+    .ai-feedback.info {
+      background: rgba(66, 133, 244, 0.1);
+      color: #8ab4f8;
+    }
+
+    .ai-feedback.error {
+      background: rgba(200, 50, 50, 0.1);
+      color: #ff6b6b;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="katha-wrapper">
+    <header class="site-header">
+      <div class="logo-area">
+        <span class="diya-icon">🪔</span>
+        <span class="brand-name">Kathaa</span>
+        <span class="brand-sub">कथा</span>
+      </div>
+      <nav class="primary-nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <button id="logoutBtn" class="nav-link"
+          style="background:none; border:none; color:inherit; cursor:pointer;">Logout</button>
+      </nav>
+    </header>
+
+    <div class="verify-container">
+      <div class="verify-header">
+        <h1>Safety First.</h1>
+        <p>To support others as a Mentor, we need to verify your background or expertise.</p>
+        <div id="currentStatus"></div>
+      </div>
+
+      <div id="verifyFormContainer">
+        <div class="verify-step">
+          <h2>Professional Identity</h2>
+          <div class="form-group">
+            <label for="mentorTitle">Professional Title</label>
+            <input type="text" id="mentorTitle" placeholder="e.g. Registered Counselor, Peer Support Specialist">
+          </div>
+          <div class="form-group">
+            <label for="mentorBio">Brief Bio & Experience</label>
+            <textarea id="mentorBio"
+              placeholder="Tell us about your background and why you want to support the Kathaa community..."></textarea>
+          </div>
+        </div>
+
+        <button id="submitVerifyBtn" class="submit-btn">Submit for AI Verification</button>
+        <div id="aiFeedback" class="ai-feedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { verifyMentorAI, getProfile } from '../js/api.js';
+    import { logout } from '../js/auth.js';
+
+    const submitBtn = document.getElementById('submitVerifyBtn');
+    const feedbackEl = document.getElementById('aiFeedback');
+    const statusEl = document.getElementById('currentStatus');
+    const formContainer = document.getElementById('verifyFormContainer');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const userInfo = JSON.parse(localStorage.getItem('kathaa_user'));
+
+    async function checkStatus() {
+      if (!userInfo) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const profile = await getProfile(userInfo.email);
+      if (profile.is_verified) {
+        statusEl.innerHTML = '<span class="status-badge status-verified">Verified Mentor</span>';
+        formContainer.style.display = 'none';
+        setTimeout(() => {
+          window.location.href = 'mentor-dashboard.html';
+        }, 2000);
+      } else {
+        statusEl.innerHTML = '<span class="status-badge status-pending">Verification Pending</span>';
+      }
+    }
+
+    submitBtn.addEventListener('click', async () => {
+      const title = document.getElementById('mentorTitle').value.trim();
+      const bio = document.getElementById('mentorBio').value.trim();
+
+      if (!title || !bio) {
+        feedbackEl.innerText = "Please fill in all fields.";
+        feedbackEl.className = "ai-feedback show error";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Processing...";
+      feedbackEl.innerText = "Our AI system is reviewing your credentials against our safety guidelines...";
+      feedbackEl.className = "ai-feedback show info";
+
+      try {
+        const result = await verifyMentorAI(title, bio);
+        feedbackEl.innerText = result.reason;
+
+        if (result.status === 'VERIFIED') {
+          feedbackEl.className = "ai-feedback show info";
+          // In a real app, we'd update the backend. Our demo backend does this via admin endpoint.
+          // For the demo flow, we'll inform them it's been sent.
+          alert("AI Verification Successful! Redirecting to your dashboard.");
+          window.location.href = 'mentor-dashboard.html';
+        } else {
+          feedbackEl.className = "ai-feedback show error";
+          submitBtn.disabled = false;
+          submitBtn.innerText = "Submit for AI Verification";
+        }
+      } catch (err) {
+        feedbackEl.innerText = "Error connecting to AI service. Please try again.";
+        feedbackEl.className = "ai-feedback show error";
+        submitBtn.disabled = false;
+      }
+    });
+
+    logoutBtn.addEventListener('click', logout);
+
+    checkStatus();
+  </script>
+</body>
+
+</html>

@@ -66,9 +66,29 @@ pids
 *.pid.lock
 
 # Python
-backend/venv/
+venv/
+.venv/
+venv-*/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.hypothesis/
+.pytest_cache/
+*.swp
+*.swo
 
 # Environment variables
 .env

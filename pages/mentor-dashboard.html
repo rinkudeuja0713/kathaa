@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kathaa — Mentor Dashboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    body {
+      background: #120e0b;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--body-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dashboard-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 40px 20px;
+      flex-grow: 1;
+    }
+
+    .dash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 50px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .brand-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--warm-gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+    }
+
+    .welcome-text h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px;
+      color: var(--cream-heading);
+      margin-bottom: 10px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 50px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 30px;
+      border-radius: 20px;
+      border: 1px solid var(--border-soft);
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-val {
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--warm-gold);
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted-text);
+    }
+
+    .session-item {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 24px 35px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .btn-create {
+      background: var(--gradient-gold);
+      color: #1a1714;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      box-shadow: 0 4px 15px rgba(212, 129, 58, 0.2);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dashboard-container">
+    <header class="dash-header">
+      <a href="../index.html" class="brand-area">
+        <span>🪔</span> Kathaa
+      </a>
+      <div class="header-actions">
+        <button class="btn-outline" id="switchToAnon" style="font-size: 0.85rem;">🎭 Switch to Healing Mode
+          (Anon)</button>
+        <button id="logoutBtn" class="nav-link"
+          style="border: none; background: none; cursor: pointer; color: var(--muted-text);">Logout</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="welcome-text" style="margin-bottom: 40px;">
+        <h1 id="welcomeUser">Welcome back...</h1>
+        <p style="color: var(--muted-text);">You are logged in as a <strong>Verified Mentor</strong>.</p>
+      </div>
+
+      <div id="personaNotice"
+        style="background: rgba(200, 169, 110, 0.05); border: 1px solid var(--border-soft); border-radius: 16px; padding: 1.5rem; margin-bottom: 3rem; font-size: 0.9rem; color: var(--muted-text); line-height: 1.7;">
+        <strong>Dual Identity Active:</strong> In this dashboard, you act as a Professional Mentor. When you switch to
+        <em>Healing Mode</em>, you become 100% anonymous, allowing you to share your own stories safely.
+      </div>
+
+      <section class="stats-row">
+        <div class="stat-card">
+          <div class="stat-val">240</div>
+          <div class="stat-label">Hours Moderated</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">1.2k</div>
+          <div class="stat-label">Women Supported</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">98%</div>
+          <div class="stat-label">Safety Rating</div>
+        </div>
+      </section>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2 class="serif-heading" style="font-size: 28px;">My Active Listeners</h2>
+        <button class="btn-create" onclick="alert('Creating session flow...')">+ New Session</button>
+      </div>
+
+      <div id="sessionList" class="session-list">
+        <!-- Sessions populated by JS -->
+        <p style="color: grey;">Loading your active sessions...</p>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { getChautariRooms, getProfile } from '../js/api.js';
+    import { logout, AUTH_USER_KEY, setActivePersona } from '../js/auth.js';
+
+    document.getElementById('switchToAnon').addEventListener('click', () => {
+      setActivePersona('storyteller');
+      window.location.href = 'feed.html';
+    });
+
+    const user = JSON.parse(localStorage.getItem(AUTH_USER_KEY));
+    const welcomeEl = document.getElementById('welcomeUser');
+    const sessionListEl = document.getElementById('sessionList');
+
+    if (!user || user.role !== 'mentor') {
+      window.location.href = 'login.html';
+    } else {
+      welcomeEl.innerText = `Namaste, ${user.email.split('@')[0]}`;
+    }
+
+    async function loadMentorData() {
+      try {
+        // Fetch all sessions (for demo, we'll just show the high-level ones)
+        const res = await fetch('http://127.0.0.1:5001/api/chautari/sessions');
+        const sessions = await res.json();
+
+        if (sessions.length === 0) {
+          sessionListEl.innerHTML = '<p>No scheduled sessions found.</p>';
+          return;
+        }
+
+        sessionListEl.innerHTML = sessions.map(s => `
+                <div class="session-item">
+                    <div class="session-info">
+                        <h3>${s.topic}</h3>
+                        <div class="session-meta">
+                            <span>📅 ${new Date(s.scheduledTime).toLocaleDateString()}</span>
+                            <span>👥 ${s.rsvpCount} RSVPs</span>
+                            <span>⏳ ${s.duration}</span>
+                        </div>
+                    </div>
+                    <div class="session-actions">
+                        <a href="chautari-stage.html?id=${s.id}" class="btn-sm btn-primary" style="background: var(--warm-gold); color: black;">Start Room</a>
+                    </div>
+                </div>
+            `).join('');
+
+      } catch (err) {
+        console.error(err);
+        sessionListEl.innerHTML = '<p>Could not load sessions.</p>';
+      }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+
+    loadMentorData();
+  </script>
+</body>
+
+</html>
