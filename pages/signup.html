@@ -374,8 +374,23 @@
   </div>
 
   <script type="module">
-    import { signup } from '../js/api.js';
-    import { AUTH_USER_KEY } from '../js/auth.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { persistUser } from '../js/auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBO2bzjwUo52rYAtAxqA04i3F_a_IDQejE",
+      authDomain: "kathaa-385a3.firebaseapp.com",
+      projectId: "kathaa-385a3",
+      storageBucket: "kathaa-385a3.firebasestorage.app",
+      messagingSenderId: "52566990780",
+      appId: "1:52566990780:web:e64147c95474885acbd5b9",
+      measurementId: "G-TFZG6F1VZR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
 
     const emailSignupForm = document.getElementById('emailSignupForm');
     const emailInput = document.getElementById('email');
@@ -393,27 +408,22 @@
       e.preventDefault();
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
-
       if (!email || !password) {
         showMessage('Please enter both email and password.', true);
         return;
       }
-
       try {
-        const result = await signup({ email, password, role: 'storyteller' });
-        if (result.success && result.user) {
-          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(result.user));
-          const name = result.user.anon_name || 'friend';
-          showMessage(`Welcome, ${name}! Your anonymous name and avatar are saved. Opening Stories…`, false);
-          setTimeout(() => {
-            window.location.href = 'feed.html';
-          }, 1400);
-        } else {
-          showMessage(result.message || 'Signup failed.', true);
-        }
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        persistUser(cred.user);
+        showMessage('Account created! Taking you to stories...', false);
+        setTimeout(() => { window.location.href = 'feed.html'; }, 1400);
       } catch (err) {
-        console.error(err);
-        showMessage('Connection error. Is the backend running?', true);
+        const msgs = {
+          'auth/email-already-in-use': 'An account already exists with this email.',
+          'auth/weak-password': 'Password must be at least 6 characters.',
+          'auth/invalid-email': 'Please enter a valid email address.'
+        };
+        showMessage(msgs[err.code] || err.message, true);
       }
     });
   </script>

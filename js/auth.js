@@ -1,80 +1,106 @@
-import { login, signup, getProfile, switchPersona } from './api.js';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBO2bzjwUo52rYAtAxqA04i3F_a_IDQejE",
+  authDomain: "kathaa-385a3.firebaseapp.com",
+  projectId: "kathaa-385a3",
+  storageBucket: "kathaa-385a3.firebasestorage.app",
+  messagingSenderId: "52566990780",
+  appId: "1:52566990780:web:e64147c95474885acbd5b9",
+  measurementId: "G-TFZG6F1VZR"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 export const AUTH_USER_KEY = 'kathaa_user';
-export const ANON_NAME_KEY = 'kathaa_anonymous_username';
+
+const ANON_AVATARS = ['🪔', '🪷', '🌸', '🕊️', '✨', '🌙', '🌿', '💫', '🏔️', '🌊'];
+const ADJ = ['Quiet', 'Gentle', 'Brave', 'Soft', 'Warm', 'Kind', 'Calm', 'Silent'];
+const NOUN = ['River', 'Lotus', 'Light', 'Harbor', 'Star', 'Cloud', 'Bloom', 'Path'];
+
+function hashString(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+  return Math.abs(h);
+}
+
+function generateAnonIdentity(uid) {
+  const h = hashString(uid);
+  return {
+    anon_avatar: ANON_AVATARS[h % ANON_AVATARS.length],
+    anon_name: `${ADJ[(h >> 4) % ADJ.length]} ${NOUN[(h >> 8) % NOUN.length]}`
+  };
+}
+
+/** Call after Firebase login to persist user metadata in localStorage */
+export function persistUser(firebaseUser, extraData = {}) {
+  const existing = getStoredUser() || {};
+  const identity = generateAnonIdentity(firebaseUser.uid);
+  const user = {
+    uid: firebaseUser.uid,
+    email: firebaseUser.email,
+    anon_avatar: existing.anon_avatar || identity.anon_avatar,
+    anon_name: existing.anon_name || identity.anon_name,
+    role: existing.role || 'storyteller',
+    is_verified: existing.is_verified || false,
+    active_persona: existing.active_persona || 'storyteller',
+    ...extraData
+  };
+  localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+  return user;
+}
+
+export function getStoredUser() {
+  try {
+    const raw = localStorage.getItem(AUTH_USER_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
 
 export function getUserId() {
-  const user = JSON.parse(localStorage.getItem(AUTH_USER_KEY));
-  return user ? user.email : null;
+  const user = getStoredUser();
+  return user ? user.uid : null;
 }
 
 export function getUserRole() {
-  const user = JSON.parse(localStorage.getItem(AUTH_USER_KEY));
+  const user = getStoredUser();
   return user ? user.role : 'storyteller';
 }
 
 export function isVerified() {
-  const user = JSON.parse(localStorage.getItem(AUTH_USER_KEY));
+  const user = getStoredUser();
   return user ? user.is_verified : false;
 }
 
 export function getActivePersona() {
-  const user = JSON.parse(localStorage.getItem(AUTH_USER_KEY));
+  const user = getStoredUser();
   return user ? user.active_persona : 'storyteller';
 }
 
-export async function handleLogin(email, password) {
-  try {
-    const data = await login(email, password);
-    if (data.success) {
-      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));
-      return { success: true };
-    }
-    return { success: false, message: data.message };
-  } catch (err) {
-    console.error('Login error:', err);
-    return { success: false, message: 'Connection error. Is the backend running?' };
+export function setActivePersona(persona) {
+  const user = getStoredUser();
+  if (user) {
+    user.active_persona = persona;
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
   }
 }
 
-export async function handleSignup(userData) {
-  try {
-    const data = await signup(userData);
-    return data;
-  } catch (err) {
-    console.error('Signup error:', err);
-    return { success: false, message: 'Connection error. Is the backend running?' };
-  }
-}
-
-/** Landing page URL from current path (same idea as auth-check `appHref` — avoids broken `/index.html` off site root). */
-function landingPageHref() {
-  const pathname = (window.location.pathname || '').replace(/\\/g, '/');
-  if (pathname.includes('/pages/')) {
-    return '../index.html';
-  }
-  return 'index.html';
+export function isLoggedIn() {
+  return !!auth.currentUser && !!getStoredUser();
 }
 
 export function logout() {
   localStorage.removeItem(AUTH_USER_KEY);
-  localStorage.removeItem(ANON_NAME_KEY);
-  window.location.replace(landingPageHref());
+  signOut(auth).finally(() => {
+    const inPages = (window.location.pathname || '').includes('/pages/');
+    window.location.replace(inPages ? '../home.html' : 'home.html');
+  });
 }
 
-export async function refreshProfile() {
-  const email = getUserId();
-  if (!email) return;
-
-  try {
-    const profile = await getProfile(email);
-    if (profile && !profile.error) {
-      const user = JSON.parse(localStorage.getItem(AUTH_USER_KEY));
-      const updatedUser = { ...user, ...profile };
-      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updatedUser));
-      return updatedUser;
-    }
-  } catch (err) {
-    console.error('Profile refresh error:', err);
-  }
+export function onAuthReady(callback) {
+  return onAuthStateChanged(auth, callback);
 }
+
+export { auth };

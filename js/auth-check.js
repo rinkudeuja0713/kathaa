@@ -1,4 +1,4 @@
-import { AUTH_USER_KEY } from './auth.js';
+import { AUTH_USER_KEY, getStoredUser, persistUser, onAuthReady } from './auth.js';
 
 /**
  * Resolve a site path from the project root (e.g. pages/login.html) to a URL that works
@@ -46,9 +46,7 @@ function appendNavLink(primaryNav, item) {
 /**
  * Route guarding and UI adjustment helper
  */
-document.addEventListener('DOMContentLoaded', () => {
-    const userJson = localStorage.getItem(AUTH_USER_KEY);
-    const user = userJson ? JSON.parse(userJson) : null;
+function initNav(user) {
     const currentPath = window.location.pathname;
 
     const primaryNav = document.querySelector('.primary-nav');
@@ -60,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const navItems = [
             { text: 'Stories', path: 'pages/feed.html' },
             { text: 'Chautari', path: 'pages/groups.html' },
-            { text: 'Mood diary', path: 'pages/tracker.html' },
             { text: 'Helpline', path: 'pages/professionals.html', class: 'nav-link-support' },
             { text: 'My space', path: 'pages/profile.html' }
         ];
@@ -170,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const publicNavItems = [
                 { text: 'Stories', path: 'pages/feed.html' },
                 { text: 'Chautari', path: 'pages/groups.html' },
-                { text: 'Mood diary', path: 'pages/tracker.html' },
                 { text: 'Helpline', path: 'pages/professionals.html', class: 'nav-link-support' },
                 { text: 'My space', path: 'pages/profile.html' }
             ];
@@ -204,8 +200,23 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
     }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    onAuthReady((firebaseUser) => {
+        if (firebaseUser) {
+            // Ensure localStorage is populated with Firebase user
+            const stored = getStoredUser();
+            const user = stored && stored.uid === firebaseUser.uid
+                ? stored
+                : persistUser(firebaseUser);
+            initNav(user);
+        } else {
+            initNav(null);
+        }
+    });
 });
 
 export function checkAuth() {
-    return !!localStorage.getItem(AUTH_USER_KEY);
+    return !!getStoredUser();
 }

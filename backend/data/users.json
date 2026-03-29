@@ -52,5 +52,14 @@
     "mentor_profile": null,
     "anon_name": "Golden Lotus",
     "anon_avatar": "\u2601\ufe0f"
+  },
+  "hello@example.com": {
+    "password": "helloexample",
+    "role": "storyteller",
+    "is_verified": false,
+    "active_persona": "storyteller",
+    "mentor_profile": null,
+    "anon_name": "Glowing Diya",
+    "anon_avatar": "\ud83e\udeb7"
   }
 }
