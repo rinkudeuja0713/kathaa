@@ -1,16 +1,12 @@
 import os
-import google.generativeai as genai
+from google import genai
 from flask import Blueprint, request, jsonify
 from dotenv import load_dotenv
 
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-2.0-flash')
-else:
-    model = None
+client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
 didi_bp = Blueprint('didi', __name__)
 
@@ -226,7 +222,7 @@ def didi_chat():
     if escalation_reply:
         return jsonify({'reply': escalation_reply, 'level': level})
 
-    if not model:
+    if not client:
         return jsonify({
             'reply': "I'm here for you. Please take your time — this space is safe, and I'm listening. 💜",
             'level': 'normal'
@@ -247,7 +243,7 @@ User: {user_message}
 
 Respond as Didi (2–4 sentences, validate first, warm and steady):"""
 
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model='gemini-2.5-flash', contents=prompt)
         reply = response.text.strip() or "I'm here with you. Take your time — you don't have to rush. 💜"
         level = 'normal'
 

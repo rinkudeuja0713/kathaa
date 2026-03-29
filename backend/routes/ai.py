@@ -1,19 +1,15 @@
 import os
+import re
+import json
 import random
-import google.generativeai as genai
+from google import genai
 from flask import Blueprint, request, jsonify
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Configure Gemini
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    # Use a lightweight model (gemini-1.5-flash is fast and cheap)
-    model = genai.GenerativeModel('gemini-2.0-flash')
-else:
-    model = None
+client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
 ai_bp = Blueprint('ai', __name__)
 
@@ -36,9 +32,9 @@ def get_suggestion():
     data = request.json
     user_text = data.get('text', '')
     if not user_text:
-        return jsonify({'suggestion': 'Share what’s on your mind for a gentle suggestion.'})
+        return jsonify({'suggestion': 'Share what\u2019s on your mind for a gentle suggestion.'})
 
-    if not model:
+    if not client:
         return jsonify({'suggestion': random.choice(FALLBACKS)})
 
     try:
@@ -53,7 +49,7 @@ Write a warm, validating response (2-3 sentences, max 70 words) that:
 - Does NOT give clinical advice, legal instructions, or tell them what to do
 - Does NOT use "Sathi" — speak to them directly and warmly as an equal
 - Sounds like a trusted woman who truly understands, not a helpline script"""
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model='gemini-2.5-flash', contents=prompt)
         suggestion = response.text.strip()
         if not suggestion:
             suggestion = random.choice(FALLBACKS)
@@ -68,12 +64,11 @@ def verify_mentor():
     data = request.json
     title = data.get('title', '')
     bio = data.get('bio', '')
-    
+
     if not title or not bio:
         return jsonify({'error': 'Missing title or bio'}), 400
 
-    # If no Gemini model, use a simple keyword-based heuristic
-    if not model:
+    if not client:
         keywords = ['counselor', 'therapist', 'doctor', 'psychologist', 'phd', 'msw', 'licensed', 'expert']
         is_credible = any(k in title.lower() or k in bio.lower() for k in keywords)
         return jsonify({
@@ -89,11 +84,9 @@ def verify_mentor():
             "Criteria: Does this person sound like a legitimate professional or experienced peer supporter?\n"
             "Return ONLY a JSON object: {\"status\": \"VERIFIED\" or \"PENDING\", \"reason\": \"short explanation\"}"
         )
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model='gemini-2.5-flash', contents=prompt)
         resp_text = response.text.strip()
-        
-        # Robust JSON extraction
-        import re
+
         json_match = re.search(r'\{.*\}', resp_text, re.DOTALL)
         if json_match:
             result = json.loads(json_match.group(0))

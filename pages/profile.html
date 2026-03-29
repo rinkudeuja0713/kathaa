@@ -21,51 +21,79 @@
     </nav>
   </header>
 
-    <main style="padding: 2rem 1.5rem; max-width: 1000px; margin: 0 auto;">
-      <!-- Storyteller Stats (Only visible in Storyteller mode) -->
-      <div id="storyteller-stats">
-        <!-- Anonymous identity card -->
-        <div class="warm-card" style="text-align: center; margin-bottom: 2rem;">
-          <span style="font-size: 4rem;">🪔</span>
-          <h2 class="serif-heading">anonymous soul</h2>
-          <p id="userIdDisplay" style="color:var(--warm-gold); font-size:0.85rem; margin: 0.5rem 0 1rem;"></p>
-          <div style="display: flex; justify-content: center; gap: 2rem; margin: 1rem 0;">
-            <div>
-              <strong style="color: var(--cream-heading);">✨ Stories shared</strong><br>
-              <span id="postCount" style="font-size: 2rem; color: var(--warm-gold);">0</span>
-            </div>
-            <div>
-              <strong style="color: var(--cream-heading);">🌱 Mood entries</strong><br>
-              <span id="moodCount" style="font-size: 2rem; color: var(--warm-gold);">0</span>
-            </div>
-          </div>
-          <div class="glow-validate" style="margin-top: 1.5rem;">
-            “Every feeling you log is a step toward clarity. You belong here.”
-          </div>
-          <div style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--muted-text);">
-            ⚡ Your identity stays completely anonymous. Only you can see this page.
+    <main style="padding: 2rem 1.5rem; max-width: 700px; margin: 0 auto;">
+
+      <!-- Anonymous identity card -->
+      <div class="warm-card" style="text-align: center; margin-bottom: 2rem;">
+        <span id="profileEmoji" style="font-size: 4rem;">🪔</span>
+        <h2 class="serif-heading" id="profileName">anonymous soul</h2>
+        <p id="userIdDisplay" style="color:var(--warm-gold); font-size:0.85rem; margin: 0.5rem 0 1rem;"></p>
+        <div style="display: flex; justify-content: center; gap: 2rem; margin: 1rem 0;">
+          <div>
+            <strong style="color: var(--cream-heading);">✨ Stories shared</strong><br>
+            <span id="postCount" style="font-size: 2rem; color: var(--warm-gold);">0</span>
           </div>
         </div>
-
-        <!-- Recent Stories -->
-        <div class="warm-card" style="margin-bottom: 2rem;">
-          <h3 class="serif-heading" style="margin-bottom: 0.5rem;">📖 Your recent stories</h3>
-          <p style="font-size: 0.85rem; color: var(--muted-text); margin-bottom: 1rem;">The last 5 stories you've shared</p>
-          <div id="userPostsList" style="display: flex; flex-direction: column; gap: 0.8rem;">
-            <div style="text-align: center; color: var(--muted-text);">Loading...</div>
-          </div>
-          <div style="text-align: center; margin-top: 1rem;">
-            <a href="feed.html" class="btn-outline" style="font-size: 0.8rem;">✍️ Share another story →</a>
-          </div>
+        <div class="glow-validate" style="margin-top: 1.5rem;">
+          "Every story you share is an act of courage. You belong here."
+        </div>
+        <div style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--muted-text);">
+          ⚡ Your identity stays completely anonymous. Only you can see this page.
         </div>
       </div>
 
-      <!-- Mentor Section -->
-      <div id="mentor-section" class="warm-card" style="margin-bottom: 2rem; border-color: var(--warm-gold);">
-        <h3 class="serif-heading" style="margin-bottom: 0.5rem;">🎓 Support as a Mentor</h3>
-        <p style="font-size: 0.85rem; color: var(--muted-text); margin-bottom: 1.2rem;">Share your expertise and hold space for others.</p>
-        <div style="text-align: center; padding: 2rem;">
-          <a href="mentor-portal.html" class="btn-primary">Visit Mentor Portal</a>
+      <!-- Edit Profile card -->
+      <div class="warm-card" style="margin-bottom: 2rem;">
+        <h3 class="serif-heading" style="margin-bottom: 1rem;">Edit your space</h3>
+
+        <div style="margin-bottom: 1.2rem;">
+          <label style="font-size: 0.85rem; color: var(--muted-text); display: block; margin-bottom: 0.4rem;">Anonymous display name</label>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <input id="anonNameInput" type="text" maxlength="30"
+              style="flex:1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-soft); border-radius: 10px; padding: 0.6rem 1rem; color: var(--cream-heading); font-family: inherit; font-size: 0.95rem;"
+              placeholder="e.g. Warm Lotus" />
+            <button onclick="saveDisplayName()" class="btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;">Save</button>
+          </div>
+          <p id="nameSaveMsg" style="font-size: 0.78rem; color: var(--warm-gold); margin-top: 0.4rem; display:none;">Saved!</p>
+        </div>
+
+        <div style="margin-bottom: 1.2rem;">
+          <label style="font-size: 0.85rem; color: var(--muted-text); display: block; margin-bottom: 0.4rem;">Preferred language</label>
+          <select id="langPref"
+            style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-soft); border-radius: 10px; padding: 0.6rem 1rem; color: var(--cream-heading); font-family: inherit; font-size: 0.9rem; width: 100%;">
+            <option value="en">English</option>
+            <option value="ne">नेपाली</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: 0.85rem; color: var(--muted-text); display: block; margin-bottom: 0.6rem;">Anonymous identity</label>
+          <button onclick="regenerateIdentity()" class="btn-outline" style="font-size: 0.8rem; width: 100%;">
+            🔀 Generate a new anonymous name
+          </button>
+          <p style="font-size: 0.75rem; color: var(--muted-text); margin-top: 0.5rem;">Your posts remain anonymous regardless of your display name.</p>
+        </div>
+      </div>
+
+      <!-- Safety & privacy -->
+      <div class="warm-card" style="margin-bottom: 2rem;">
+        <h3 class="serif-heading" style="margin-bottom: 1rem;">Safety & privacy</h3>
+        <div style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.9rem; color: var(--muted-text);">
+          <div style="display: flex; align-items: center; gap: 0.8rem;">
+            <span style="font-size: 1.2rem;">🔒</span>
+            <span>Your stories are anonymous — your name is never attached</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.8rem;">
+            <span style="font-size: 1.2rem;">🗑️</span>
+            <span>You can delete any story you've shared from the feed</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.8rem;">
+            <span style="font-size: 1.2rem;">💜</span>
+            <span>Didi conversations are never saved or shared</span>
+          </div>
+        </div>
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <a href="feed.html" class="btn-outline" style="font-size: 0.85rem;">✍️ Share a story →</a>
         </div>
       </div>
 
@@ -78,7 +106,75 @@
 
 <script type="module" src="../js/auth-check.js"></script>
 <script src="../js/posts.js"></script>
-<script src="../js/moodTracker.js"></script>
-<script type="module" src="../js/profile-init.js"></script>
+<script src="../js/didi.js"></script>
+<script type="module">
+  import { getUserId, onAuthReady } from '../js/auth.js';
+
+  const AUTH_KEY = 'kathaa_user';
+
+  function getStored() {
+    try { return JSON.parse(localStorage.getItem(AUTH_KEY)) || {}; } catch { return {}; }
+  }
+
+  async function loadPostCount(uid) {
+    try {
+      const resp = await fetch(`http://localhost:5001/api/posts`);
+      const posts = await resp.json();
+      const mine = posts.filter(p => p.authorId === uid);
+      document.getElementById('postCount').innerText = mine.length;
+    } catch {
+      // fallback to local cache
+      const local = window.kathaaPosts ? window.kathaaPosts.getUserPosts(uid) : [];
+      document.getElementById('postCount').innerText = local.length;
+    }
+  }
+
+  onAuthReady(async (firebaseUser) => {
+    if (!firebaseUser) { window.location.href = 'login.html'; return; }
+
+    const uid = firebaseUser.uid;
+    const stored = getStored();
+    const name = stored.anon_name || 'anonymous soul';
+    const avatar = stored.anon_avatar || '🪔';
+
+    document.getElementById('profileName').innerText = name;
+    document.getElementById('profileEmoji').innerText = avatar;
+    document.getElementById('userIdDisplay').innerText = `Your Kathaa ID · ${uid.slice(0, 12)}...`;
+    document.getElementById('anonNameInput').value = name;
+
+    const langPref = localStorage.getItem('kathaa_landing_lang') || 'en';
+    document.getElementById('langPref').value = langPref;
+
+    document.getElementById('langPref').addEventListener('change', (e) => {
+      localStorage.setItem('kathaa_landing_lang', e.target.value);
+    });
+
+    await loadPostCount(uid);
+  });
+
+  window.saveDisplayName = function() {
+    const val = document.getElementById('anonNameInput').value.trim();
+    if (!val) return;
+    const stored = getStored();
+    stored.anon_name = val;
+    localStorage.setItem(AUTH_KEY, JSON.stringify(stored));
+    document.getElementById('profileName').innerText = val;
+    const msg = document.getElementById('nameSaveMsg');
+    msg.style.display = 'block';
+    setTimeout(() => { msg.style.display = 'none'; }, 2000);
+  };
+
+  const ADJECTIVES = ['Warm', 'Gentle', 'Brave', 'Quiet', 'Soft', 'Still', 'Golden', 'Rising', 'Steady', 'Open'];
+  const NOUNS = ['Lotus', 'Flame', 'River', 'Mountain', 'Moon', 'Ember', 'Dawn', 'Star', 'Bloom', 'Light'];
+
+  window.regenerateIdentity = function() {
+    const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+    const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
+    const name = `${adj} ${noun}`;
+    document.getElementById('anonNameInput').value = name;
+    window.saveDisplayName();
+    document.getElementById('profileEmoji').innerText = '🪔';
+  };
+</script>
 </body>
 </html>
